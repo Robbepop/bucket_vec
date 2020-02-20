@@ -1,9 +1,9 @@
 use super::BucketVec;
 
-/// An iterator over the elements of a pinning vector.
+/// An iterator over the elements of a bucket vector.
 #[derive(Debug)]
 pub struct Iter<'a, T, C> {
-    /// The iterated over pinning vector.
+    /// The iterated over bucket vector.
     vec: &'a BucketVec<T, C>,
     /// The index of the starting entry.
     start_entry: usize,
@@ -18,7 +18,7 @@ pub struct Iter<'a, T, C> {
 }
 
 impl<'a, T, C> Iter<'a, T, C> {
-    /// Creates a new iterator over the pinning vector.
+    /// Creates a new iterator over the bucket vector.
     pub fn new(vec: &'a BucketVec<T, C>) -> Self {
         Self {
             vec,
