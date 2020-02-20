@@ -1,0 +1,20 @@
+[package]
+name = "bucket_vec"
+version = "0.1.0"
+authors = ["Robin Freyler <robin.freyler@gmail.com>"]
+edition = "2018"
+documentation = "https://docs.rs/bucket_vec"
+license = "MIT OR Apache-2.0"
+keywords = ["bucket", "vec", "pin"]
+description = """
+An efficient vector-like data structure that consists of fixed-capacity buckets
+in order to store elements without moving them arround upon reallocations allowing
+safe pinned references to internal elements if the outer bucket vector is pinned.
+"""
+categories = ["data-structures"]
+
+[dependencies]
+
+[features]
+default = ["std"]
+std = []
