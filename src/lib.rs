@@ -369,9 +369,18 @@ where
 {
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
         let mut vec = Self::new();
-        for item in iter {
-            vec.push(item)
-        }
+        <Self as core::iter::Extend<T>>::extend(&mut vec, iter);
         vec
+    }
+}
+
+impl<T, C> core::iter::Extend<T> for BucketVec<T, C>
+where
+    C: BucketVecConfig,
+{
+    fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
+        for item in iter {
+            self.push(item)
+        }
     }
 }
