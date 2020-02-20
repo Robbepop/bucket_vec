@@ -194,7 +194,6 @@ fn get_works_for_wasteful_config() {
 }
 
 #[test]
-#[ignore]
 fn get_works_for_c3g1x5_config() {
     get_works_for_config::<C3G1x5Config>()
 }

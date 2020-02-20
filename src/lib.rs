@@ -343,10 +343,10 @@ where
         } else {
             // `growth rate != 1.0`:
             // Non-trivial case: Buckets are unequally sized.
-            let x = <f64 as FloatExt>::floor(<f64 as FloatExt>::log(
-                1.0 + index as f64 * (growth_rate - 1.0) / start_capacity as f64,
+            let x = <f64 as FloatExt>::ceil(<f64 as FloatExt>::log(
+                1.0 + (index + 1) as f64 * (growth_rate - 1.0) / start_capacity as f64,
                 growth_rate,
-            )) as usize;
+            ) - 1.0) as usize;
             let y = index - Self::total_capacity(x);
             Some((x, y))
         }

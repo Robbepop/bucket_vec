@@ -6,6 +6,8 @@ pub trait FloatExt {
     fn abs(self) -> Self;
     /// Rounds the float down to the next natural representable float.
     fn floor(self) -> Self;
+    /// Rounds teh float up to the next natural representable float.
+    fn ceil(self) -> Self;
     /// Calculates the natural logarithm of the float to the base.
     fn log(self, base: Self) -> Self;
     /// Calculates the power of the float to the exponent.
@@ -20,6 +22,10 @@ impl FloatExt for f64 {
 
     fn floor(self) -> Self {
         f64::floor(self)
+    }
+
+    fn ceil(self) -> Self {
+        f64::ceil(self)
     }
 
     fn log(self, base: Self) -> Self {
@@ -39,6 +45,10 @@ impl FloatExt for f64 {
 
     fn floor(self) -> Self {
         libm::floor(self)
+    }
+
+    fn ceil(self) -> Self {
+        libm::ceil(self)
     }
 
     fn log(self, base: Self) -> Self {
