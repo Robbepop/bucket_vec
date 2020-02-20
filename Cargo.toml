@@ -18,6 +18,9 @@ categories = ["data-structures"]
 # Required because `no_std` Rust does not support required math operations.
 libm = { version = "0.2", default-features = false }
 
+[dev-dependencies]
+paste = "0.1.6"
+
 [features]
 default = ["std"]
 std = []

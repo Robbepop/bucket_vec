@@ -1,117 +1,5 @@
 use super::*;
 
-fn filled_dummy_vec<C>() -> BucketVec<i32, C>
-where
-    C: BucketVecConfig,
-{
-    let mut vec = BucketVec::new();
-    vec.push(5);
-    vec.push(42);
-    vec.push(1337);
-    vec.push(-1);
-    vec.push(0);
-    vec.push(7);
-    vec.push(66);
-    vec.push(12);
-    vec
-}
-
-#[test]
-fn new_works() {
-    let vec = <BucketVec<i32>>::default();
-    assert_eq!(vec.len(), 0);
-    assert!(vec.is_empty());
-    assert!(vec.iter().next().is_none());
-    assert!(vec.iter().next_back().is_none());
-}
-
-#[test]
-fn push_works() {
-    let mut vec = BucketVec::default();
-    assert_eq!(vec.len(), 0);
-    vec.push(5);
-    vec.push(42);
-    vec.push(1337);
-    vec.push(-1);
-    vec.push(0);
-    vec.push(7);
-    vec.push(66);
-    vec.push(12);
-    assert_eq!(vec.len(), 8);
-}
-
-#[test]
-fn iter_next_works() {
-    let vec = filled_dummy_vec::<DefaultConfig>();
-    let mut iter = vec.iter();
-    assert_eq!(iter.next(), Some(&5));
-    assert_eq!(iter.next(), Some(&42));
-    assert_eq!(iter.next(), Some(&1337));
-    assert_eq!(iter.next(), Some(&-1));
-    assert_eq!(iter.next(), Some(&0));
-    assert_eq!(iter.next(), Some(&7));
-    assert_eq!(iter.next(), Some(&66));
-    assert_eq!(iter.next(), Some(&12));
-    dbg!(&iter);
-    assert_eq!(iter.next(), None);
-}
-
-#[test]
-fn iter_next_back_works() {
-    let vec = filled_dummy_vec::<DefaultConfig>();
-    let mut iter = vec.iter();
-    assert_eq!(iter.next_back(), Some(&12));
-    assert_eq!(iter.next_back(), Some(&66));
-    assert_eq!(iter.next_back(), Some(&7));
-    assert_eq!(iter.next_back(), Some(&0));
-    assert_eq!(iter.next_back(), Some(&-1));
-    assert_eq!(iter.next_back(), Some(&1337));
-    assert_eq!(iter.next_back(), Some(&42));
-    assert_eq!(iter.next_back(), Some(&5));
-    assert_eq!(iter.next(), None);
-}
-
-#[test]
-fn iter_next_meet_middle() {
-    let vec = filled_dummy_vec::<DefaultConfig>();
-    let mut iter = vec.iter();
-    assert_eq!(iter.next(), Some(&5));
-    assert_eq!(iter.next_back(), Some(&12));
-    assert_eq!(iter.next(), Some(&42));
-    assert_eq!(iter.next(), Some(&1337));
-    assert_eq!(iter.next_back(), Some(&66));
-    assert_eq!(iter.next_back(), Some(&7));
-    assert_eq!(iter.next(), Some(&-1));
-    assert_eq!(iter.next_back(), Some(&0));
-    assert_eq!(iter.next(), None);
-    assert_eq!(iter.next_back(), None);
-}
-
-#[test]
-fn access_works() {
-    let mut vec = BucketVec::default();
-    dbg!(&vec);
-    assert_eq!(vec.push_get(1).index(), 0);
-    // assert_eq!(vec.push_get(2).into_ref(), &2);
-    // assert_eq!(vec.push_get(3).into_mut(), &mut 3);
-}
-
-fn get_works_for_config<C>()
-where
-    C: BucketVecConfig,
-{
-    let vec = filled_dummy_vec::<C>();
-    assert_eq!(vec.get(0), Some(&5));
-    assert_eq!(vec.get(1), Some(&42));
-    assert_eq!(vec.get(2), Some(&1337));
-    assert_eq!(vec.get(3), Some(&-1));
-    assert_eq!(vec.get(4), Some(&0));
-    assert_eq!(vec.get(5), Some(&7));
-    assert_eq!(vec.get(6), Some(&66));
-    assert_eq!(vec.get(7), Some(&12));
-    assert_eq!(vec.get(8), None);
-}
-
 /// A configuration for bucket vectors that grows quadratically.
 #[derive(Debug)]
 pub enum QuadraticConfig {}
@@ -173,27 +61,181 @@ impl BucketVecConfig for C3G1x5Config {
     const GROWTH_RATE: f64 = 1.5;
 }
 
-#[test]
-fn get_works_for_quadratic_config() {
-    get_works_for_config::<QuadraticConfig>()
+macro_rules! create_test_for_configs {
+    ( $test_fn:ident ) => {
+        paste::item! {
+            #[test]
+            fn [<$test_fn _quadratic_config>]() {
+                $test_fn::<QuadraticConfig>()
+            }
+
+            #[test]
+            fn [<$test_fn _cubic_config>]() {
+                $test_fn::<CubicConfig>()
+            }
+
+            #[test]
+            fn [<$test_fn _equal_size_config>]() {
+                $test_fn::<EqualSizeConfig>()
+            }
+
+            #[test]
+            fn [<$test_fn _wasteful_config>]() {
+                $test_fn::<WastefulConfig>()
+            }
+
+            #[test]
+            fn [<$test_fn _c3g1x5_config>]() {
+                $test_fn::<C3G1x5Config>()
+            }
+        }
+    };
 }
 
-#[test]
-fn get_works_for_cubic_config() {
-    get_works_for_config::<CubicConfig>()
+fn filled_dummy_vec<C>() -> BucketVec<i32, C>
+where
+    C: BucketVecConfig,
+{
+    let mut vec = BucketVec::new();
+    vec.push(5);
+    vec.push(42);
+    vec.push(1337);
+    vec.push(-1);
+    vec.push(0);
+    vec.push(7);
+    vec.push(66);
+    vec.push(12);
+    vec
 }
 
-#[test]
-fn get_works_for_equal_size_config() {
-    get_works_for_config::<EqualSizeConfig>()
+fn new_works_for<C>()
+where
+    C: BucketVecConfig,
+{
+    let mut vec = <BucketVec<i32, C>>::new();
+    assert_eq!(vec.len(), 0);
+    assert!(vec.is_empty());
+    assert!(vec.iter().next().is_none());
+    assert!(vec.iter().next_back().is_none());
+    assert!(vec.iter_mut().next().is_none());
+    assert!(vec.iter_mut().next_back().is_none());
 }
+create_test_for_configs!(new_works_for);
 
-#[test]
-fn get_works_for_wasteful_config() {
-    get_works_for_config::<WastefulConfig>()
+fn push_works_for<C>()
+where
+    C: BucketVecConfig,
+{
+    let mut vec = <BucketVec<i32, C>>::new();
+    assert_eq!(vec.len(), 0);
+    vec.push(5);
+    vec.push(42);
+    vec.push(1337);
+    vec.push(-1);
+    vec.push(0);
+    vec.push(7);
+    vec.push(66);
+    vec.push(12);
+    assert_eq!(vec.len(), 8);
 }
+create_test_for_configs!(push_works_for);
 
-#[test]
-fn get_works_for_c3g1x5_config() {
-    get_works_for_config::<C3G1x5Config>()
+fn iter_next_works_for<C>()
+where
+    C: BucketVecConfig,
+{
+    let vec = filled_dummy_vec::<C>();
+    let mut iter = vec.iter();
+    assert_eq!(iter.next(), Some(&5));
+    assert_eq!(iter.next(), Some(&42));
+    assert_eq!(iter.next(), Some(&1337));
+    assert_eq!(iter.next(), Some(&-1));
+    assert_eq!(iter.next(), Some(&0));
+    assert_eq!(iter.next(), Some(&7));
+    assert_eq!(iter.next(), Some(&66));
+    assert_eq!(iter.next(), Some(&12));
+    assert_eq!(iter.next(), None);
 }
+create_test_for_configs!(iter_next_works_for);
+
+fn iter_next_back_works<C>()
+where
+    C: BucketVecConfig,
+{
+    let vec = filled_dummy_vec::<C>();
+    let mut iter = vec.iter();
+    assert_eq!(iter.next_back(), Some(&12));
+    assert_eq!(iter.next_back(), Some(&66));
+    assert_eq!(iter.next_back(), Some(&7));
+    assert_eq!(iter.next_back(), Some(&0));
+    assert_eq!(iter.next_back(), Some(&-1));
+    assert_eq!(iter.next_back(), Some(&1337));
+    assert_eq!(iter.next_back(), Some(&42));
+    assert_eq!(iter.next_back(), Some(&5));
+    assert_eq!(iter.next(), None);
+}
+create_test_for_configs!(iter_next_back_works);
+
+fn iter_next_meet_middle_works_for<C>()
+where
+    C: BucketVecConfig,
+{
+    let vec = filled_dummy_vec::<C>();
+    let mut iter = vec.iter();
+    assert_eq!(iter.next(), Some(&5));
+    assert_eq!(iter.next_back(), Some(&12));
+    assert_eq!(iter.next(), Some(&42));
+    assert_eq!(iter.next(), Some(&1337));
+    assert_eq!(iter.next_back(), Some(&66));
+    assert_eq!(iter.next_back(), Some(&7));
+    assert_eq!(iter.next(), Some(&-1));
+    assert_eq!(iter.next_back(), Some(&0));
+    assert_eq!(iter.next(), None);
+    assert_eq!(iter.next_back(), None);
+}
+create_test_for_configs!(iter_next_meet_middle_works_for);
+
+fn access_works_for<C>()
+where
+    C: BucketVecConfig,
+{
+    let mut vec = <BucketVec<i32, C>>::new();
+    assert_eq!(vec.push_get(1).index(), 0);
+    assert_eq!(vec.push_get(2).into_ref(), &2);
+    assert_eq!(vec.push_get(3).into_mut(), &mut 3);
+}
+create_test_for_configs!(access_works_for);
+
+fn get_works_for<C>()
+where
+    C: BucketVecConfig,
+{
+    let vec = filled_dummy_vec::<C>();
+    assert_eq!(vec.get(0), Some(&5));
+    assert_eq!(vec.get(1), Some(&42));
+    assert_eq!(vec.get(2), Some(&1337));
+    assert_eq!(vec.get(3), Some(&-1));
+    assert_eq!(vec.get(4), Some(&0));
+    assert_eq!(vec.get(5), Some(&7));
+    assert_eq!(vec.get(6), Some(&66));
+    assert_eq!(vec.get(7), Some(&12));
+    assert_eq!(vec.get(8), None);
+}
+create_test_for_configs!(get_works_for);
+
+fn get_mut_works_for<C>()
+where
+    C: BucketVecConfig,
+{
+    let mut vec = filled_dummy_vec::<C>();
+    assert_eq!(vec.get_mut(0), Some(&mut 5));
+    assert_eq!(vec.get_mut(1), Some(&mut 42));
+    assert_eq!(vec.get_mut(2), Some(&mut 1337));
+    assert_eq!(vec.get_mut(3), Some(&mut -1));
+    assert_eq!(vec.get_mut(4), Some(&mut 0));
+    assert_eq!(vec.get_mut(5), Some(&mut 7));
+    assert_eq!(vec.get_mut(6), Some(&mut 66));
+    assert_eq!(vec.get_mut(7), Some(&mut 12));
+    assert_eq!(vec.get_mut(8), None);
+}
+create_test_for_configs!(get_mut_works_for);
