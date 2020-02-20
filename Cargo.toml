@@ -3,6 +3,7 @@ name = "bucket_vec"
 version = "0.1.1"
 authors = ["Robin Freyler <robin.freyler@gmail.com>"]
 edition = "2018"
+repository = "https://github.com/Robbepop/bucket_vec"
 documentation = "https://docs.rs/bucket_vec"
 license = "MIT OR Apache-2.0"
 keywords = ["bucket", "vec", "pin"]
