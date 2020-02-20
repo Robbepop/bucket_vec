@@ -39,7 +39,7 @@
 //!
 //! We have already pushed the elements `A`,.., `K` onto it.
 //!
-//! ```
+//! ```no_compile
 //! [ [A], [B, C], [D, E, F, G], [H, I, J, K, _, _, _, _] ]
 //! ```
 //!
@@ -47,14 +47,14 @@
 //!
 //! Pushing another `L`,.., `O` onto the same `BucketVec` results in:
 //!
-//! ```
+//! ```no_compile
 //! [ [A], [B, C], [D, E, F, G], [H, I, J, K, L, M, N, O] ]
 //! ```
 //!
 //! So we are full on capacity for all buckets.
 //! The next time we push another element onto the `BucketVec` it will create a new `Bucket` with a capacity of `16` since `growth_rate == 2` and our current latest bucket already has a capacity of `8`.
 //!
-//! ```
+//! ```no_compile
 //! [ [A], [B, C], [D, E, F, G], [H, I, J, K, L, M, N, O], [P, 15 x _] ]
 //! ```
 //!
@@ -116,13 +116,13 @@ impl BucketVecConfig for DefaultConfig {
 /// The total capacity of all buckets until bucket `i` (not including `i`)
 /// is expressed as:
 ///
-/// ```no_compile, no_run
+/// ```no_compile
 /// capacity_until(i) := N * (a^i - 1) / (a-1)
 /// ```
 ///
 /// The capacity of the `i`th bucket is then calculated by:
 ///
-/// ```no_compile, no_run
+/// ```no_compile
 /// capacity(i) := floor(capacity_until(i+1)) - floor(capacity_until(i))
 /// ```
 ///
@@ -145,12 +145,12 @@ impl BucketVecConfig for DefaultConfig {
 ///
 /// First we define the inverted capacity function for which
 /// `1 == capacity(i) * inv_capacity(i)` forall `i`.
-/// ```no_compile, no_run
+/// ```no_compile
 /// inv_capacity(i) = floor(log(1 + i * (a - 1) / N, a))
 /// ```
 /// Having this the `bucket_index` and the `entry_index` inside the bucket
 /// indexed by `bucket_index` is expressed as:
-/// ```no_compile, no_run
+/// ```no_compile
 /// bucket_index(i) = inv_capacity(i)
 /// entry_index(i) = i - floor(capacity_until(bucket_index(i)))
 /// ```
@@ -160,7 +160,7 @@ impl BucketVecConfig for DefaultConfig {
 /// This case is very easy and we can simply calculate the `bucket_index` and
 /// `entry_index` by:
 ///
-/// ```no_compile, no_run
+/// ```no_compile
 /// bucket_index(i) = i / N
 /// entry_index(i) = i % N
 /// ```
