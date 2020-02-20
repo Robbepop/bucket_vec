@@ -62,12 +62,20 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
+#[cfg(not(feature = "std"))]
+extern crate alloc;
+
+#[cfg(not(feature = "std"))]
+use alloc::vec::Vec;
+
 mod iter;
+mod math;
 
 #[cfg(test)]
 mod tests;
 
 use self::iter::Iter;
+use self::math::FloatExt;
 use core::marker::PhantomData;
 
 /// Basic configs of a bucket vector.
@@ -335,7 +343,7 @@ where
         } else {
             // `growth rate != 1.0`:
             // Non-trivial case: Buckets are unequally sized.
-            let x = f64::floor(f64::log(
+            let x = <f64 as FloatExt>::floor(<f64 as FloatExt>::log(
                 1.0 + index as f64 * (growth_rate - 1.0) / start_capacity as f64,
                 growth_rate,
             )) as usize;
@@ -361,7 +369,7 @@ where
     fn total_capacity(index: usize) -> usize {
         let start_capacity = <C as BucketVecConfig>::STARTING_CAPACITY;
         let growth_rate = <C as BucketVecConfig>::GROWTH_RATE;
-        f64::floor(
+        <f64 as FloatExt>::floor(
             start_capacity as f64 * (growth_rate.powf(index as f64) - 1.0) / (growth_rate - 1.0),
         ) as usize
     }
