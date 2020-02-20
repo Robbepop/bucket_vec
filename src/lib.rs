@@ -95,7 +95,7 @@ pub trait BucketVecConfig {
 }
 
 /// The default configuration for bucket vectors.
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub enum DefaultConfig {}
 
 impl BucketVecConfig for DefaultConfig {
@@ -174,7 +174,7 @@ impl BucketVecConfig for DefaultConfig {
 /// bucket_index(i) = i / N
 /// entry_index(i) = i % N
 /// ```
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct BucketVec<T, C = DefaultConfig> {
     /// The number of elements stored in the bucket vector.
     len: usize,
