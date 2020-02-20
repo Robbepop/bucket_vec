@@ -76,6 +76,7 @@ mod math;
 mod tests;
 
 use self::bucket::Bucket;
+pub use self::iter::Iter;
 use self::math::FloatExt;
 use core::marker::PhantomData;
 
