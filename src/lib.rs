@@ -74,7 +74,7 @@ mod math;
 #[cfg(test)]
 mod tests;
 
-use self::iter::Iter;
+use self::iter::{Iter, IterMut};
 use self::math::FloatExt;
 use core::marker::PhantomData;
 
@@ -294,6 +294,12 @@ impl<T> core::ops::Index<usize> for Bucket<T> {
     }
 }
 
+impl<T> core::ops::IndexMut<usize> for Bucket<T> {
+    fn index_mut(&mut self, index: usize) -> &mut Self::Output {
+        self.get_mut(index).expect("index out of bounds")
+    }
+}
+
 impl<T, C> BucketVec<T, C> {
     /// Creates a new empty bucket vector.
     ///
@@ -429,8 +435,13 @@ where
         Access::new(index, ref_mut)
     }
 
-    /// Returns an iterator over the elements of the bucket vector.
+    /// Returns an iterator that yields shared references to the elements of the bucket vector.
     pub fn iter(&self) -> Iter<T, C> {
         Iter::new(self)
+    }
+
+    /// Returns an iterator that yields exclusive references to the elements of the bucket vector.
+    pub fn iter_mut(&mut self) -> IterMut<T, C> {
+        IterMut::new(self)
     }
 }
