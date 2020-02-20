@@ -96,16 +96,7 @@ fn filled_dummy_vec<C>() -> BucketVec<i32, C>
 where
     C: BucketVecConfig,
 {
-    let mut vec = BucketVec::new();
-    vec.push(5);
-    vec.push(42);
-    vec.push(1337);
-    vec.push(-1);
-    vec.push(0);
-    vec.push(7);
-    vec.push(66);
-    vec.push(12);
-    vec
+    vec![5, 42, 1337, -1, 0, 7, 66, 12].into_iter().collect()
 }
 
 fn new_works_for<C>()

@@ -442,3 +442,16 @@ where
         Iter::new(self)
     }
 }
+
+impl<T, C> core::iter::FromIterator<T> for BucketVec<T, C>
+where
+    C: BucketVecConfig,
+{
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        let mut vec = Self::new();
+        for item in iter {
+            vec.push(item)
+        }
+        vec
+    }
+}
