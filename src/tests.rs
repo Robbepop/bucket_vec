@@ -112,13 +112,11 @@ fn new_works_for<C>()
 where
     C: BucketVecConfig,
 {
-    let mut vec = <BucketVec<i32, C>>::new();
+    let vec = <BucketVec<i32, C>>::new();
     assert_eq!(vec.len(), 0);
     assert!(vec.is_empty());
     assert!(vec.iter().next().is_none());
     assert!(vec.iter().next_back().is_none());
-    assert!(vec.iter_mut().next().is_none());
-    assert!(vec.iter_mut().next_back().is_none());
 }
 create_test_for_configs!(new_works_for);
 
