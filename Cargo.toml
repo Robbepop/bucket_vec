@@ -6,7 +6,7 @@ edition = "2018"
 repository = "https://github.com/Robbepop/bucket_vec"
 documentation = "https://docs.rs/bucket_vec"
 license = "MIT OR Apache-2.0"
-keywords = ["bucket", "vec", "pin"]
+keywords = ["bucket", "vec", "vector", "box", "pin"]
 description = """
 A vector-like data structure that guarantees to never move its contained elements.
 """
