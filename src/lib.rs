@@ -69,6 +69,7 @@ extern crate alloc;
 use alloc::vec::Vec;
 
 mod bucket;
+mod config;
 mod iter;
 mod math;
 
@@ -76,34 +77,12 @@ mod math;
 mod tests;
 
 use self::bucket::Bucket;
-pub use self::iter::Iter;
 use self::math::FloatExt;
+pub use self::{
+    config::{BucketVecConfig, DefaultConfig},
+    iter::Iter,
+};
 use core::marker::PhantomData;
-
-/// Basic configs of a bucket vector.
-pub trait BucketVecConfig {
-    /// The capacity of the first entry of the bucket vector.
-    ///
-    /// This value must be larger than or equal to `1`.
-    const STARTING_CAPACITY: usize;
-    /// The rate with which the buckets are extended in their capacity.
-    ///
-    /// This value must be larger than or equal to `1`.
-    /// Bigger values increase the growth acceleration upon pushing elements.
-    /// A value of `1` renders all buckets equally sized.
-    const GROWTH_RATE: f64;
-}
-
-/// The default configuration for bucket vectors.
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum DefaultConfig {}
-
-impl BucketVecConfig for DefaultConfig {
-    /// The first bucket has a capacity of 1.
-    const STARTING_CAPACITY: usize = 1;
-    /// The next bucket always doubles in capacity.
-    const GROWTH_RATE: f64 = 2.0;
-}
 
 /// A vector-like data structure that never moves its contained elements.
 ///
