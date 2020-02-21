@@ -1,5 +1,14 @@
 # Bucket Vector
 
+|       Docs                       |       Crates.io                        |
+|:--------------------------------:|:--------------------------------------:|
+| [![docs][docs-badge]][docs-link] | [![crates][crates-badge]][crates-link] |
+
+[docs-badge]: https://docs.rs/bucket_vec/badge.svg
+[docs-link]: https://docs.rs/bucket_vec
+[crates-badge]: https://img.shields.io/crates/v/bucket_vec.svg
+[crates-link]: https://crates.io/crates/bucket_vec
+
 ## ⚠️ Caution
 
 > USE WITH CAUTION
