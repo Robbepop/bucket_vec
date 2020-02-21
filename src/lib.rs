@@ -108,7 +108,7 @@ impl BucketVecConfig for DefaultConfig {
 /// A vector-like data structure that never moves its contained elements.
 ///
 /// This is solved by using internal fixed-capacity buckets instead of boxing
-/// all elements is isolation.
+/// all elements in isolation.
 ///
 /// # Formulas
 ///
@@ -156,8 +156,11 @@ impl BucketVecConfig for DefaultConfig {
 /// First we define the inverted capacity function for which
 /// `1 == capacity(i) * inv_capacity(i)` forall `i`.
 /// ```no_compile
-/// inv_capacity(i) = floor(log(1 + i * (a - 1) / N, a))
+/// inv_capacity(i) = ceil(log(1 + (i + 1) * (a - 1) / N, a)) - 1
 /// ```
+/// Where `ceil: f64 -> f64` rounds the `f64` up to the next even `f64`
+/// for positive `f64`.
+///
 /// Having this the `bucket_index` and the `entry_index` inside the bucket
 /// indexed by `bucket_index` is expressed as:
 /// ```no_compile
