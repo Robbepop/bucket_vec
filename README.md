@@ -103,71 +103,27 @@ Some benchmarks (`get`) have shown significant difference between configs.
 The following is the output of a benchmark run:
 
 ```
-     Running target/release/deps/bench-88691f185efb078f
-bucket_vec::push/10000  time:   [45.263 us 45.568 us 45.949 us]
-                        change: [-1.0498% +1.5709% +4.5268%] (p = 0.27 > 0.05)
-                        No change in performance detected.
-Found 23 outliers among 100 measurements (23.00%)
-  17 (17.00%) low severe
-  2 (2.00%) low mild
-  4 (4.00%) high severe
+bucket_vec::push/10000        time:   [43.650 us 43.818 us 43.995 us]
+vec_box::push/10000           time:   [405.64 us 411.44 us 418.03 us]
+vec_value::push/10000         time:   [28.840 us 28.957 us 29.096 us]
 
-vec_box::push/10000     time:   [418.10 us 424.25 us 431.12 us]
-                        change: [-85.039% -1.9304% +548.90%] (p = 0.85 > 0.05)
-                        No change in performance detected.
-Found 1 outliers among 100 measurements (1.00%)
-  1 (1.00%) high severe
+bucket_vec::get/10000         time:   [20.260 us 20.307 us 20.360 us]
+vec_box::get/10000            time:   [14.472 us 14.503 us 14.538 us]
+vec_value::get/10000          time:   [8.8010 us 8.8174 us 8.8365 us]
 
-vec_value::push/10000   time:   [26.439 us 26.570 us 26.721 us]
-                        change: [-3.5568% +0.2897% +4.9941%] (p = 0.90 > 0.05)
-                        No change in performance detected.
-Found 14 outliers among 100 measurements (14.00%)
-  10 (10.00%) low severe
-  3 (3.00%) high mild
-  1 (1.00%) high severe
+bucket_vec::iter/10000        time:   [5.9917 us 6.0059 us 6.0212 us]
+vec_box::iter/10000           time:   [9.8053 us 9.8318 us 9.8626 us]
+vec_value::iter/10000         time:   [3.6165 us 3.6297 us 3.6445 us]
 
-bucket_vec::get/10000   time:   [17.907 us 17.999 us 18.109 us]
-                        change: [-1.3982% -0.8478% -0.2357%] (p = 0.00 < 0.05)
-                        Change within noise threshold.
-Found 2 outliers among 100 measurements (2.00%)
-  2 (2.00%) high mild
-
-vec_box::get/10000      time:   [15.033 us 15.089 us 15.146 us]
-                        change: [-0.6401% -0.0157% +0.6349%] (p = 0.97 > 0.05)
-                        No change in performance detected.
-Found 6 outliers among 100 measurements (6.00%)
-  5 (5.00%) high mild
-  1 (1.00%) high severe
-
-vec_value::get/10000    time:   [9.1707 us 9.2141 us 9.2654 us]
-                        change: [+0.0592% +0.7703% +1.5666%] (p = 0.04 < 0.05)
-                        Change within noise threshold.
-Found 3 outliers among 100 measurements (3.00%)
-  1 (1.00%) high mild
-  2 (2.00%) high severe
-
-bucket_vec::iter/10000  time:   [31.203 us 31.299 us 31.401 us]
-                        change: [-0.3489% +0.1717% +0.6862%] (p = 0.53 > 0.05)
-                        No change in performance detected.
-Found 7 outliers among 100 measurements (7.00%)
-  1 (1.00%) low mild
-  5 (5.00%) high mild
-  1 (1.00%) high severe
-
-vec_box::iter/10000     time:   [9.8021 us 9.8342 us 9.8689 us]
-                        change: [-1.9532% -1.4184% -0.8723%] (p = 0.00 < 0.05)
-                        Change within noise threshold.
-Found 5 outliers among 100 measurements (5.00%)
-  4 (4.00%) high mild
-  1 (1.00%) high severe
-
-vec_value::iter/10000   time:   [3.7098 us 3.7219 us 3.7349 us]
-                        change: [+0.3577% +1.3855% +2.8360%] (p = 0.01 < 0.05)
-                        Change within noise threshold.
-Found 7 outliers among 100 measurements (7.00%)
-  4 (4.00%) high mild
-  3 (3.00%) high severe
+bucket_vec::iter.rev()/10000  time:   [5.2279 us 5.2400 us 5.2536 us]
+vec_box::iter.rev()/10000     time:   [10.021 us 10.042 us 10.065 us]
+vec_value::iter.rev()/10000   time:   [3.5831 us 3.5945 us 3.6074 us]
 ```
+
+It can be seen that `BucketVec` greatly outperforms `Vec<Box<_>>` on
+`push`, `iter` and `iter().rev()` benchmarks.
+Also `BucketVec` is approximately 50% slower than the `Vec<_>` which is the
+theoretical optimum that unfortunately doesn't solve the underlying problem.
 
 ## Authors & Credits
 
