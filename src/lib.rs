@@ -285,7 +285,7 @@ where
         let start_capacity = <C as BucketVecConfig>::STARTING_CAPACITY;
         let growth_rate = <C as BucketVecConfig>::GROWTH_RATE;
         <f64 as FloatExt>::floor(
-            start_capacity as f64 * (growth_rate.powf(index as f64) - 1.0) / (growth_rate - 1.0),
+            start_capacity as f64 * (growth_rate.powi(index as i32) - 1.0) / (growth_rate - 1.0),
         ) as usize
     }
 
