@@ -9,8 +9,9 @@ license = "MIT OR Apache-2.0"
 keywords = ["bucket", "vec", "pin"]
 description = """
 An efficient vector-like data structure that consists of fixed-capacity buckets
-in order to store elements without moving them arround upon reallocations allowing
-safe pinned references to internal elements if the outer bucket vector is pinned.
+in order to store elements without moving them arround as a replacement for
+situations where the naive go-to solution would be using a collection of boxes,
+e.g. Vec<Box<T>>.
 """
 categories = ["data-structures"]
 
