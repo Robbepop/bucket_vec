@@ -227,7 +227,7 @@ impl<T, C> BucketVec<T, C> {
     }
 
     /// Returns an iterator that yields shared references to the elements of the bucket vector.
-    pub fn iter(&self) -> Iter<T, C> {
+    pub fn iter(&self) -> Iter<T> {
         Iter::new(self)
     }
 }

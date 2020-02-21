@@ -1,51 +1,61 @@
-use super::BucketVec;
+use super::{Bucket, BucketVec};
 
 /// An iterator over the elements of a bucket vector.
 #[derive(Debug)]
-pub struct Iter<'a, T, C> {
-    /// The iterated over bucket vector.
-    vec: &'a BucketVec<T, C>,
-    /// The index of the starting entry.
-    start_entry: usize,
-    /// The index of the ending entry.
-    end_entry: usize,
-    /// The index of the start element of the starting entry.
-    start: usize,
-    /// The index of the end element of the ending entry.
-    end: usize,
+pub struct Iter<'a, T> {
+    /// Buckets iterator used by forward iteration.
+    start_buckets: core::slice::Iter<'a, Bucket<T>>,
+    /// Buckets iterator used by backward iteration.
+    end_buckets: core::slice::Iter<'a, Bucket<T>>,
+    /// Entries of the start bucket.
+    start_entries: core::slice::Iter<'a, T>,
+    /// Entries of the end bucket.
+    end_entries: core::slice::Iter<'a, T>,
     /// Total iterated elements.
     total_iterated: usize,
+    /// The total length of the iterated bucket vector.
+    vec_len: usize,
 }
 
-impl<'a, T, C> Iter<'a, T, C> {
+impl<'a, T> Iter<'a, T> {
     /// Creates a new iterator over the bucket vector.
-    pub fn new(vec: &'a BucketVec<T, C>) -> Self {
-        Self {
-            vec,
-            start_entry: 0,
-            end_entry: vec.buckets.len(),
-            start: 0,
-            end: vec.buckets.last().map(|entry| entry.len()).unwrap_or(0),
-            total_iterated: 0,
+    pub fn new<C>(vec: &'a BucketVec<T, C>) -> Self {
+        if vec.len() == 0 {
+            Self {
+                start_buckets: [].iter(),
+                end_buckets: [].iter(),
+                start_entries: [].iter(),
+                end_entries: [].iter(),
+                total_iterated: 0,
+                vec_len: 0,
+            }
+        } else {
+            Self {
+                start_buckets: vec.buckets[1..].into_iter(),
+                end_buckets: vec.buckets[..vec.buckets.len() - 1].into_iter(),
+                start_entries: vec.buckets[0].iter(),
+                end_entries: vec.buckets[vec.buckets.len() - 1].iter(),
+                total_iterated: 0,
+                vec_len: vec.len(),
+            }
         }
     }
 }
 
-impl<'a, T, C> Iterator for Iter<'a, T, C> {
+impl<'a, T> Iterator for Iter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.total_iterated == self.vec.len() {
+        if self.total_iterated == self.vec_len {
             return None;
         }
-        let next = &self.vec.buckets[self.start_entry][self.start];
-        self.start += 1;
-        if self.start == self.vec.buckets[self.start_entry].capacity() {
-            self.start = 0;
-            self.start_entry += 1;
-        }
         self.total_iterated += 1;
-        Some(next)
+        if let Some(start) = self.start_entries.next() {
+            Some(start)
+        } else {
+            self.start_entries = self.start_buckets.next().unwrap().iter();
+            Some(self.start_entries.next().unwrap())
+        }
     }
 
     fn size_hint(&self) -> (usize, Option<usize>) {
@@ -53,23 +63,23 @@ impl<'a, T, C> Iterator for Iter<'a, T, C> {
     }
 }
 
-impl<'a, T, C> DoubleEndedIterator for Iter<'a, T, C> {
+impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
     fn next_back(&mut self) -> Option<Self::Item> {
-        if self.total_iterated == self.vec.len() {
+        if self.total_iterated == self.vec_len {
             return None;
         }
-        if self.end == 0 {
-            self.end_entry = self.end_entry.saturating_sub(1);
-            self.end = self.vec.buckets[self.end_entry.saturating_sub(1)].len();
-        }
-        self.end = self.end.saturating_sub(1);
         self.total_iterated += 1;
-        Some(&self.vec.buckets[self.end_entry.saturating_sub(1)][self.end])
+        if let Some(end) = self.end_entries.next_back() {
+            Some(end)
+        } else {
+            self.end_entries = self.end_buckets.next_back().unwrap().iter();
+            Some(self.end_entries.next_back().unwrap())
+        }
     }
 }
 
-impl<'a, T, C> ExactSizeIterator for Iter<'a, T, C> {
+impl<'a, T> ExactSizeIterator for Iter<'a, T> {
     fn len(&self) -> usize {
-        self.vec.len() - self.total_iterated
+        self.vec_len - self.total_iterated
     }
 }
