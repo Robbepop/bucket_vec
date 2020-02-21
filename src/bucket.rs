@@ -68,6 +68,11 @@ impl<T> Bucket<T> {
         }
         self.entries.push(new_value);
     }
+
+    /// Returns an iterator over the entries of the bucket.
+    pub fn iter(&self) -> core::slice::Iter<T> {
+        self.entries.iter()
+    }
 }
 
 impl<T> core::ops::Index<usize> for Bucket<T> {
