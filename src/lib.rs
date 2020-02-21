@@ -247,7 +247,7 @@ where
         // Calculate bucket index and entry index within the bucket.
         let start_capacity = <C as BucketVecConfig>::STARTING_CAPACITY;
         let growth_rate = <C as BucketVecConfig>::GROWTH_RATE;
-        if (growth_rate - 1.0).abs() < 1e-10 {
+        if (growth_rate - 1.0).abs() < core::f64::EPSILON {
             // growth_rate == 1.0:
             // Simple case: All buckets are equally sized.
             let x = index / start_capacity;
@@ -257,7 +257,7 @@ where
             // growth rate != 1.0:
             // Non-trivial case: Buckets are unequally sized.
             let f_inv = 1.0 + (index + 1) as f64 * (growth_rate - 1.0) / start_capacity as f64;
-            let off_x = if (growth_rate - 2.0).abs() < 1e-10 {
+            let off_x = if (growth_rate - 2.0).abs() < core::f64::EPSILON {
                 <f64 as FloatExt>::log2(f_inv)
             } else {
                 <f64 as FloatExt>::log(f_inv, growth_rate)
@@ -285,7 +285,7 @@ where
     fn total_capacity(index: usize) -> usize {
         let start_capacity = <C as BucketVecConfig>::STARTING_CAPACITY;
         let growth_rate = <C as BucketVecConfig>::GROWTH_RATE;
-        if growth_rate.fract().abs() < 1e-10 {
+        if growth_rate.fract().abs() < core::f64::EPSILON {
             let growth_rate = growth_rate as usize;
             start_capacity * (growth_rate.pow(index as u32) - 1) / (growth_rate - 1)
         } else {
@@ -299,7 +299,7 @@ where
     fn bucket_capacity(index: usize) -> usize {
         let start_capacity = <C as BucketVecConfig>::STARTING_CAPACITY;
         let growth_rate = <C as BucketVecConfig>::GROWTH_RATE;
-        if (growth_rate - 1.0).abs() < 1e-10 {
+        if (growth_rate - 1.0).abs() < core::f64::EPSILON {
             start_capacity
         } else {
             let next_total_capacity = Self::total_capacity(index + 1);
