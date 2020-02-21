@@ -10,6 +10,8 @@ pub trait FloatExt {
     fn ceil(self) -> Self;
     /// Calculates the natural logarithm of the float to the base.
     fn log(self, base: Self) -> Self;
+    /// Caululates the logarithm of the float to base 2.
+    fn log2(self) -> Self;
     /// Calculates the power of the float to the integer exponent.
     fn powi(self, exp: i32) -> Self;
 }
@@ -30,6 +32,10 @@ impl FloatExt for f64 {
 
     fn log(self, base: Self) -> Self {
         f64::log(self, base)
+    }
+
+    fn log2(self) -> Self {
+        f64::log2(self)
     }
 
     fn powi(self, exp: i32) -> Self {
@@ -53,6 +59,10 @@ impl FloatExt for f64 {
 
     fn log(self, base: Self) -> Self {
         libm::log(self) / libm::log(base)
+    }
+
+    fn log2(self) -> Self {
+        libm::log2(self)
     }
 
     fn powi(self, exp: i32) -> Self {

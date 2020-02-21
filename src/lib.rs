@@ -248,20 +248,21 @@ where
         let start_capacity = <C as BucketVecConfig>::STARTING_CAPACITY;
         let growth_rate = <C as BucketVecConfig>::GROWTH_RATE;
         if (growth_rate - 1.0).abs() < 1e-10 {
-            // `growth rate == 1.0`:
+            // growth_rate == 1.0:
             // Simple case: All buckets are equally sized.
             let x = index / start_capacity;
             let y = index % start_capacity;
             Some((x, y))
         } else {
-            // `growth rate != 1.0`:
+            // growth rate != 1.0:
             // Non-trivial case: Buckets are unequally sized.
-            let x = <f64 as FloatExt>::ceil(
-                <f64 as FloatExt>::log(
-                    1.0 + (index + 1) as f64 * (growth_rate - 1.0) / start_capacity as f64,
-                    growth_rate,
-                ) - 1.0,
-            ) as usize;
+            let f_inv = 1.0 + (index + 1) as f64 * (growth_rate - 1.0) / start_capacity as f64;
+            let off_x = if (growth_rate - 2.0).abs() < 1e-10 {
+                <f64 as FloatExt>::log2(f_inv)
+            } else {
+                <f64 as FloatExt>::log(f_inv, growth_rate)
+            };
+            let x = <f64 as FloatExt>::ceil(off_x) as usize - 1;
             let y = index - Self::total_capacity(x);
             Some((x, y))
         }
