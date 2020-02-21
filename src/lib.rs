@@ -285,9 +285,14 @@ where
     fn total_capacity(index: usize) -> usize {
         let start_capacity = <C as BucketVecConfig>::STARTING_CAPACITY;
         let growth_rate = <C as BucketVecConfig>::GROWTH_RATE;
-        <f64 as FloatExt>::floor(
-            start_capacity as f64 * (growth_rate.powi(index as i32) - 1.0) / (growth_rate - 1.0),
-        ) as usize
+        if growth_rate.fract().abs() < 1e-10 {
+            let growth_rate = growth_rate as usize;
+            start_capacity * (growth_rate.pow(index as u32) - 1) / (growth_rate - 1)
+        } else {
+            <f64 as FloatExt>::floor(
+                start_capacity as f64 * (growth_rate.powi(index as i32) - 1.0) / (growth_rate - 1.0),
+            ) as usize
+        }
     }
 
     /// Returns the capacity of the indexed bucket.
