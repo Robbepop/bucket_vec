@@ -225,6 +225,11 @@ impl<T, C> BucketVec<T, C> {
     pub fn is_empty(&self) -> bool {
         self.len() == 0
     }
+
+    /// Returns an iterator that yields shared references to the elements of the bucket vector.
+    pub fn iter(&self) -> Iter<T, C> {
+        Iter::new(self)
+    }
 }
 
 impl<T, C> BucketVec<T, C>
@@ -337,11 +342,6 @@ where
             .get_mut(index)
             .expect("we just pushed an element so must be Some");
         Access::new(index, ref_mut)
-    }
-
-    /// Returns an iterator that yields shared references to the elements of the bucket vector.
-    pub fn iter(&self) -> Iter<T, C> {
-        Iter::new(self)
     }
 }
 
