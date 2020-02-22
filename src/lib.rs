@@ -285,12 +285,12 @@ where
     fn total_capacity(index: usize) -> usize {
         let start_capacity = <C as BucketVecConfig>::STARTING_CAPACITY;
         let growth_rate = <C as BucketVecConfig>::GROWTH_RATE;
-        if growth_rate.fract().abs() < core::f64::EPSILON {
+        if <f64 as FloatExt>::fract(growth_rate).abs() < core::f64::EPSILON {
             let growth_rate = growth_rate as usize;
             start_capacity * (growth_rate.pow(index as u32) - 1) / (growth_rate - 1)
         } else {
             <f64 as FloatExt>::floor(
-                start_capacity as f64 * (growth_rate.powi(index as i32) - 1.0) / (growth_rate - 1.0),
+                start_capacity as f64 * (<f64 as FloatExt>::powi(growth_rate, index as i32) - 1.0) / (growth_rate - 1.0),
             ) as usize
         }
     }

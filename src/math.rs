@@ -4,6 +4,8 @@
 pub trait FloatExt {
     /// Calculates the absolute value for the float.
     fn abs(self) -> Self;
+    /// Returns the fraction part of the float.
+    fn fract(self) -> Self;
     /// Rounds the float down to the next natural representable float.
     fn floor(self) -> Self;
     /// Rounds teh float up to the next natural representable float.
@@ -20,6 +22,10 @@ pub trait FloatExt {
 impl FloatExt for f64 {
     fn abs(self) -> Self {
         f64::abs(self)
+    }
+
+    fn fract(self) -> Self {
+        f64::fract(self)
     }
 
     fn floor(self) -> Self {
@@ -49,6 +55,10 @@ impl FloatExt for f64 {
         libm::fabs(self)
     }
 
+    fn fract(self) -> Self {
+        self - libm::trunc(self)
+    }
+
     fn floor(self) -> Self {
         libm::floor(self)
     }
@@ -66,6 +76,6 @@ impl FloatExt for f64 {
     }
 
     fn powi(self, exp: i32) -> Self {
-        libm::powi(self as f32, exp) as f64
+        libm::pow(self, exp as f64)
     }
 }
