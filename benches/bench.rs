@@ -227,6 +227,65 @@ fn bench_vec_value_iter_rev(c: &mut Criterion) {
         },
     );
 }
+
+fn bench_bucket_vec_iter_mut(c: &mut Criterion) {
+    let vec = vec![0; BIG_SAMPLE_SIZE]
+        .into_iter()
+        .collect::<BucketVec<i32, QuadraticConfig>>();
+    c.bench_with_input(
+        BenchmarkId::new("bucket_vec::iter_mut", BIG_SAMPLE_SIZE),
+        &BIG_SAMPLE_SIZE,
+        move |b, _size| {
+            b.iter_batched_ref(
+                || vec.clone(),
+                |vec| {
+                    for i in vec.iter_mut() {
+                        black_box(*i);
+                    }
+                },
+                BatchSize::SmallInput,
+            );
+        },
+    );
+}
+
+fn bench_vec_box_iter_mut(c: &mut Criterion) {
+    let vec = (0..BIG_SAMPLE_SIZE)
+        .into_iter()
+        .map(|value| Box::new(value as i32))
+        .collect::<Vec<Box<i32>>>();
+    c.bench_with_input(
+        BenchmarkId::new("bucket_vec::iter_mut", BIG_SAMPLE_SIZE),
+        &BIG_SAMPLE_SIZE,
+        move |b, _size| {
+            b.iter_batched_ref(
+                || vec.clone(),
+                |vec| {
+                    for i in vec.iter_mut() {
+                        black_box(**i);
+                    }
+                },
+                BatchSize::SmallInput,
+            );
+        },
+    );
+}
+
+fn bench_vec_value_iter_mut(c: &mut Criterion) {
+    let vec = vec![0; BIG_SAMPLE_SIZE];
+    c.bench_with_input(
+        BenchmarkId::new("bucket_vec::iter_mut", BIG_SAMPLE_SIZE),
+        &BIG_SAMPLE_SIZE,
+        move |b, _size| {
+            b.iter_batched_ref(
+                || vec.clone(),
+                |vec| {
+                    for i in vec.iter_mut() {
+                        black_box(*i);
+                    }
+                },
+                BatchSize::SmallInput,
+            );
         },
     );
 }
@@ -256,8 +315,8 @@ criterion_group!(
     bench_vec_value_iter_rev,
 );
 criterion_main!(
-    bench_push,
-    bench_get,
-    bench_iter,
-    bench_iter_rev,
+    // bench_push,
+    // bench_get,
+    // bench_iter,
+    // bench_iter_rev,
 );
