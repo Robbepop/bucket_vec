@@ -96,7 +96,7 @@ fn filled_dummy_vec<C>() -> BucketVec<i32, C>
 where
     C: BucketVecConfig,
 {
-    vec![5, 42, 1337, -1, 0, 7, 66, 12].into_iter().collect()
+    vec![5, 42, 1337, -1, 0, 7, 66, 12, 1, 2, 3, 1].into_iter().collect()
 }
 
 fn new_works_for<C>()
@@ -125,7 +125,11 @@ where
     vec.push(7);
     vec.push(66);
     vec.push(12);
-    assert_eq!(vec.len(), 8);
+    vec.push(1);
+    vec.push(2);
+    vec.push(3);
+    vec.push(1);
+    assert_eq!(vec.len(), 12);
 }
 create_test_for_configs!(push_works_for);
 
@@ -143,6 +147,10 @@ where
     assert_eq!(iter.next(), Some(&7));
     assert_eq!(iter.next(), Some(&66));
     assert_eq!(iter.next(), Some(&12));
+    assert_eq!(iter.next(), Some(&1));
+    assert_eq!(iter.next(), Some(&2));
+    assert_eq!(iter.next(), Some(&3));
+    assert_eq!(iter.next(), Some(&1));
     assert_eq!(iter.next(), None);
 }
 create_test_for_configs!(iter_next_works_for);
@@ -153,6 +161,10 @@ where
 {
     let vec = filled_dummy_vec::<C>();
     let mut iter = vec.iter();
+    assert_eq!(iter.next_back(), Some(&1));
+    assert_eq!(iter.next_back(), Some(&3));
+    assert_eq!(iter.next_back(), Some(&2));
+    assert_eq!(iter.next_back(), Some(&1));
     assert_eq!(iter.next_back(), Some(&12));
     assert_eq!(iter.next_back(), Some(&66));
     assert_eq!(iter.next_back(), Some(&7));
@@ -171,14 +183,20 @@ where
 {
     let vec = filled_dummy_vec::<C>();
     let mut iter = vec.iter();
+
     assert_eq!(iter.next(), Some(&5));
-    assert_eq!(iter.next_back(), Some(&12));
+    assert_eq!(iter.next_back(), Some(&1));
     assert_eq!(iter.next(), Some(&42));
+    assert_eq!(iter.next_back(), Some(&3));
     assert_eq!(iter.next(), Some(&1337));
-    assert_eq!(iter.next_back(), Some(&66));
-    assert_eq!(iter.next_back(), Some(&7));
+    assert_eq!(iter.next_back(), Some(&2));
     assert_eq!(iter.next(), Some(&-1));
-    assert_eq!(iter.next_back(), Some(&0));
+    assert_eq!(iter.next_back(), Some(&1));
+    assert_eq!(iter.next(), Some(&0));
+    assert_eq!(iter.next_back(), Some(&12));
+    assert_eq!(iter.next(), Some(&7));
+    assert_eq!(iter.next_back(), Some(&66));
+
     assert_eq!(iter.next(), None);
     assert_eq!(iter.next_back(), None);
 }
@@ -208,7 +226,11 @@ where
     assert_eq!(vec.get(5), Some(&7));
     assert_eq!(vec.get(6), Some(&66));
     assert_eq!(vec.get(7), Some(&12));
-    assert_eq!(vec.get(8), None);
+    assert_eq!(vec.get(8), Some(&1));
+    assert_eq!(vec.get(9), Some(&2));
+    assert_eq!(vec.get(10), Some(&3));
+    assert_eq!(vec.get(11), Some(&1));
+    assert_eq!(vec.get(12), None);
 }
 create_test_for_configs!(get_works_for);
 
@@ -225,6 +247,10 @@ where
     assert_eq!(vec.get_mut(5), Some(&mut 7));
     assert_eq!(vec.get_mut(6), Some(&mut 66));
     assert_eq!(vec.get_mut(7), Some(&mut 12));
-    assert_eq!(vec.get_mut(8), None);
+    assert_eq!(vec.get_mut(8), Some(&mut 1));
+    assert_eq!(vec.get_mut(9), Some(&mut 2));
+    assert_eq!(vec.get_mut(10), Some(&mut 3));
+    assert_eq!(vec.get_mut(11), Some(&mut 1));
+    assert_eq!(vec.get_mut(12), None);
 }
 create_test_for_configs!(get_mut_works_for);
