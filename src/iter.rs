@@ -6,9 +6,9 @@ pub struct Iter<'a, T> {
     /// Buckets iterator.
     buckets: core::slice::Iter<'a, Bucket<T>>,
     /// Front iterator for `next`.
-    front_iter: core::slice::Iter<'a, T>,
+    front_iter: Option<core::slice::Iter<'a, T>>,
     /// Back iterator for `next_back`.
-    back_iter: core::slice::Iter<'a, T>,
+    back_iter: Option<core::slice::Iter<'a, T>>,
     /// Number of elements that are to be yielded by the iterator.
     len: usize,
 }
@@ -16,17 +16,10 @@ pub struct Iter<'a, T> {
 impl<'a, T> Iter<'a, T> {
     /// Creates a new iterator over the bucket vector.
     pub fn new<C>(vec: &'a BucketVec<T, C>) -> Self {
-        let mut buckets = vec.buckets.iter();
         Self {
-            front_iter: buckets
-                .next()
-                .map(|bucket| bucket.iter())
-                .unwrap_or_else(|| [].iter()),
-            back_iter: buckets
-                .next_back()
-                .map(|bucket| bucket.iter())
-                .unwrap_or_else(|| [].iter()),
-            buckets: buckets,
+            buckets: vec.buckets.iter(),
+            front_iter: None,
+            back_iter: None,
             len: vec.len(),
         }
     }
@@ -37,16 +30,18 @@ impl<'a, T> Iterator for Iter<'a, T> {
 
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            if let front @ Some(_) = self.front_iter.next() {
-                self.len -= 1;
-                return front;
+            if let Some(ref mut front_iter) = self.front_iter {
+                if let front @ Some(_) = front_iter.next() {
+                    self.len -= 1;
+                    return front;
+                }
             }
             match self.buckets.next() {
                 None => {
                     self.len -= 1;
-                    return self.back_iter.next();
+                    return self.back_iter.as_mut()?.next();
                 }
-                Some(bucket) => self.front_iter = bucket.iter(),
+                Some(bucket) => self.front_iter = Some(bucket.iter()),
             }
         }
     }
@@ -59,16 +54,18 @@ impl<'a, T> Iterator for Iter<'a, T> {
 impl<'a, T> DoubleEndedIterator for Iter<'a, T> {
     fn next_back(&mut self) -> Option<Self::Item> {
         loop {
-            if let back @ Some(_) = self.back_iter.next_back() {
-                self.len -= 1;
-                return back;
+            if let Some(ref mut back_iter) = self.back_iter {
+                if let back @ Some(_) = back_iter.next_back() {
+                    self.len -= 1;
+                    return back;
+                }
             }
             match self.buckets.next_back() {
                 None => {
                     self.len -= 1;
-                    return self.front_iter.next_back();
+                    return self.front_iter.as_mut()?.next_back();
                 }
-                Some(bucket) => self.back_iter = bucket.iter(),
+                Some(bucket) => self.back_iter = Some(bucket.iter()),
             }
         }
     }
@@ -122,7 +119,7 @@ impl<'a, T> Iterator for IterMut<'a, T> {
                     self.len -= 1;
                     return self.back_iter.as_mut()?.next();
                 }
-                Some(inner) => self.front_iter = Some(inner.iter_mut()),
+                Some(bucket) => self.front_iter = Some(bucket.iter_mut()),
             }
         }
     }
@@ -144,9 +141,9 @@ impl<'a, T> DoubleEndedIterator for IterMut<'a, T> {
             match self.buckets.next_back() {
                 None => {
                     self.len -= 1;
-                    return self.front_iter.as_mut()?.next();
+                    return self.front_iter.as_mut()?.next_back();
                 }
-                Some(inner) => self.back_iter = Some(inner.iter_mut()),
+                Some(bucket) => self.back_iter = Some(bucket.iter_mut()),
             }
         }
     }
