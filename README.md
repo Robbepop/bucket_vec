@@ -103,21 +103,26 @@ Some benchmarks (`get`) have shown significant difference between configs.
 The following is the output of a benchmark run:
 
 ```
-bucket_vec::push/10000        time:   [43.650 us 43.818 us 43.995 us]
-vec_box::push/10000           time:   [405.64 us 411.44 us 418.03 us]
-vec_value::push/10000         time:   [28.840 us 28.957 us 29.096 us]
+bucket_vec::push/10000       time:   [43.647 us 43.861 us 44.108 us]
+vec_box::push/10000          time:   [405.37 us 410.91 us 417.20 us]
+vec_value::push/10000        time:   [25.826 us 25.915 us 26.020 us]
 
-bucket_vec::get/10000         time:   [20.260 us 20.307 us 20.360 us]
-vec_box::get/10000            time:   [14.472 us 14.503 us 14.538 us]
-vec_value::get/10000          time:   [8.8010 us 8.8174 us 8.8365 us]
+bucket_vec::get/10000        time:   [17.369 us 17.416 us 17.470 us]
+vec_box::get/10000           time:   [14.446 us 14.485 us 14.537 us]
+vec_value::get/10000         time:   [8.7939 us 8.8105 us 8.8300 us]
 
-bucket_vec::iter/10000        time:   [5.9917 us 6.0059 us 6.0212 us]
-vec_box::iter/10000           time:   [9.8053 us 9.8318 us 9.8626 us]
-vec_value::iter/10000         time:   [3.6165 us 3.6297 us 3.6445 us]
+bucket_vec::iter/10000       time:   [4.4195 us 4.4316 us 4.4454 us]
+vec_box::iter/10000          time:   [9.5925 us 9.6246 us 9.6610 us]
+vec_value::iter/10000        time:   [3.5955 us 3.6043 us 3.6142 us]
 
-bucket_vec::iter.rev()/10000  time:   [5.2279 us 5.2400 us 5.2536 us]
-vec_box::iter.rev()/10000     time:   [10.021 us 10.042 us 10.065 us]
-vec_value::iter.rev()/10000   time:   [3.5831 us 3.5945 us 3.6074 us]
+bucket_vec::iter.rev()/10000 time:   [3.9804 us 3.9957 us 4.0144 us]
+vec_box::iter.rev()/10000    time:   [9.9677 us 9.9980 us 10.033 us]
+vec_value::iter.rev()/10000  time:   [3.5827 us 3.5944 us 3.6080 us]
+
+bucket_vec::iter_mut/10000   time:   [5.0533 us 5.0710 us 5.0909 us]
+vec_box::iter_mut/10000      time:   [13.425 us 13.845 us 14.203 us]
+vec_value::iter_mut/10000    time:   [4.0172 us 4.0473 us 4.0820 us]
+
 ```
 
 It can be seen that `BucketVec` greatly outperforms `Vec<Box<_>>` on
