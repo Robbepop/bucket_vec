@@ -125,7 +125,7 @@ fn big_test_values() -> Vec<i32> {
     let mut vec = Vec::new();
     let mut rng = rand::thread_rng();
     use rand::Rng as _;
-    for _ in 0..10 {
+    for _ in 0..10_000 {
         vec.push(rng.gen());
     }
     vec
