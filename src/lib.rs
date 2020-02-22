@@ -244,28 +244,7 @@ where
         if index >= self.len() {
             return None;
         }
-        // Calculate bucket index and entry index within the bucket.
-        let start_capacity = <C as BucketVecConfig>::STARTING_CAPACITY;
-        let growth_rate = <C as BucketVecConfig>::GROWTH_RATE;
-        if (growth_rate - 1.0).abs() < core::f64::EPSILON {
-            // growth_rate == 1.0:
-            // Simple case: All buckets are equally sized.
-            let x = index / start_capacity;
-            let y = index % start_capacity;
-            Some((x, y))
-        } else {
-            // growth rate != 1.0:
-            // Non-trivial case: Buckets are unequally sized.
-            let f_inv = 1.0 + (index + 1) as f64 * (growth_rate - 1.0) / start_capacity as f64;
-            let off_x = if (growth_rate - 2.0).abs() < core::f64::EPSILON {
-                <f64 as FloatExt>::log2(f_inv)
-            } else {
-                <f64 as FloatExt>::log(f_inv, growth_rate)
-            };
-            let x = <f64 as FloatExt>::ceil(off_x) as usize - 1;
-            let y = index - Self::total_capacity(x);
-            Some((x, y))
-        }
+        Some(config::bucket_entry_indices::<C>(index))
     }
 
     /// Returns a shared reference to the element at the given index if any.
@@ -280,38 +259,10 @@ where
             .and_then(move |(x, y)| self.buckets[x].get_mut(y))
     }
 
-    /// Returns the total capacity of all buckets up to (and including) the
-    /// bucket indexed by `index`.
-    fn total_capacity(index: usize) -> usize {
-        let start_capacity = <C as BucketVecConfig>::STARTING_CAPACITY;
-        let growth_rate = <C as BucketVecConfig>::GROWTH_RATE;
-        if <f64 as FloatExt>::fract(growth_rate).abs() < core::f64::EPSILON {
-            let growth_rate = growth_rate as usize;
-            start_capacity * (growth_rate.pow(index as u32) - 1) / (growth_rate - 1)
-        } else {
-            <f64 as FloatExt>::floor(
-                start_capacity as f64 * (<f64 as FloatExt>::powi(growth_rate, index as i32) - 1.0) / (growth_rate - 1.0),
-            ) as usize
-        }
-    }
-
-    /// Returns the capacity of the indexed bucket.
-    fn bucket_capacity(index: usize) -> usize {
-        let start_capacity = <C as BucketVecConfig>::STARTING_CAPACITY;
-        let growth_rate = <C as BucketVecConfig>::GROWTH_RATE;
-        if (growth_rate - 1.0).abs() < core::f64::EPSILON {
-            start_capacity
-        } else {
-            let next_total_capacity = Self::total_capacity(index + 1);
-            let total_capacity = Self::total_capacity(index);
-            next_total_capacity - total_capacity
-        }
-    }
-
     /// Pushes a new bucket containing the new value onto the bucket vector.
     fn push_bucket(&mut self, new_value: T) {
         let len_buckets = self.buckets.len();
-        let new_capacity = Self::bucket_capacity(len_buckets);
+        let new_capacity = config::bucket_capacity::<C>(len_buckets);
         let mut new_entry = Bucket::new(new_capacity);
         new_entry.push(new_value);
         self.buckets.push(new_entry);
