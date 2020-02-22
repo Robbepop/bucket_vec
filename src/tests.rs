@@ -65,28 +65,53 @@ macro_rules! create_test_for_configs {
     ( $test_fn:ident ) => {
         paste::item! {
             #[test]
-            fn [<$test_fn _quadratic_config>]() {
+            fn [<$test_fn _quadratic_config_small>]() {
                 $test_fn::<QuadraticConfig>(small_test_values())
             }
 
             #[test]
-            fn [<$test_fn _cubic_config>]() {
+            fn [<$test_fn _quadratic_config_big>]() {
+                $test_fn::<QuadraticConfig>(big_test_values())
+            }
+
+            #[test]
+            fn [<$test_fn _cubic_config_small>]() {
                 $test_fn::<CubicConfig>(small_test_values())
             }
 
             #[test]
-            fn [<$test_fn _equal_size_config>]() {
+            fn [<$test_fn _cubic_config_big>]() {
+                $test_fn::<CubicConfig>(big_test_values())
+            }
+
+            #[test]
+            fn [<$test_fn _equal_size_config_small>]() {
                 $test_fn::<EqualSizeConfig>(small_test_values())
             }
 
             #[test]
-            fn [<$test_fn _wasteful_config>]() {
+            fn [<$test_fn _equal_size_config_big>]() {
+                $test_fn::<EqualSizeConfig>(big_test_values())
+            }
+
+            #[test]
+            fn [<$test_fn _wasteful_config_small>]() {
                 $test_fn::<WastefulConfig>(small_test_values())
             }
 
             #[test]
-            fn [<$test_fn _c3g1x5_config>]() {
+            fn [<$test_fn _wasteful_config_big>]() {
+                $test_fn::<WastefulConfig>(big_test_values())
+            }
+
+            #[test]
+            fn [<$test_fn _c3g1x5_config_small>]() {
                 $test_fn::<C3G1x5Config>(small_test_values())
+            }
+
+            #[test]
+            fn [<$test_fn _c3g1x5_config_big>]() {
+                $test_fn::<C3G1x5Config>(big_test_values())
             }
         }
     };
@@ -123,11 +148,12 @@ where
     C: BucketVecConfig,
 {
     let mut vec = <BucketVec<i32, C>>::new();
+    let expected_len = test_values.len();
     for (i, value) in test_values.into_iter().enumerate() {
         assert_eq!(vec.len(), i);
         vec.push(value);
     }
-    assert_eq!(vec.len(), 12);
+    assert_eq!(vec.len(), expected_len);
 }
 create_test_for_configs!(push_works_for);
 
