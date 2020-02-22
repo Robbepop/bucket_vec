@@ -231,6 +231,7 @@ impl<T, C> BucketVec<T, C> {
         Iter::new(self)
     }
 
+    /// Returns an iterator that yields exclusive reference to the elements of the bucket vector.
     pub fn iter_mut(&mut self) -> IterMut<T> {
         IterMut::new(self)
     }
