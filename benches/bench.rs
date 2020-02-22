@@ -255,7 +255,7 @@ fn bench_vec_box_iter_mut(c: &mut Criterion) {
         .map(|value| Box::new(value as i32))
         .collect::<Vec<Box<i32>>>();
     c.bench_with_input(
-        BenchmarkId::new("bucket_vec::iter_mut", BIG_SAMPLE_SIZE),
+        BenchmarkId::new("vec_box::iter_mut", BIG_SAMPLE_SIZE),
         &BIG_SAMPLE_SIZE,
         move |b, _size| {
             b.iter_batched_ref(
@@ -274,7 +274,7 @@ fn bench_vec_box_iter_mut(c: &mut Criterion) {
 fn bench_vec_value_iter_mut(c: &mut Criterion) {
     let vec = vec![0; BIG_SAMPLE_SIZE];
     c.bench_with_input(
-        BenchmarkId::new("bucket_vec::iter_mut", BIG_SAMPLE_SIZE),
+        BenchmarkId::new("vec_value::iter_mut", BIG_SAMPLE_SIZE),
         &BIG_SAMPLE_SIZE,
         move |b, _size| {
             b.iter_batched_ref(
