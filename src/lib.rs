@@ -156,7 +156,7 @@ use core::marker::PhantomData;
 /// bucket_index(i) = i / N
 /// entry_index(i) = i % N
 /// ```
-#[derive(Debug, Hash)]
+#[derive(Debug)]
 pub struct BucketVec<T, C = DefaultConfig> {
     /// The number of elements stored in the bucket vector.
     len: usize,
@@ -220,6 +220,18 @@ where
             }
         }
         self.len().cmp(&other.len())
+    }
+}
+
+impl<T, C> core::hash::Hash for BucketVec<T, C>
+where
+    T: core::hash::Hash,
+{
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.len().hash(state);
+        for elem in self.iter() {
+            elem.hash(state);
+        }
     }
 }
 
