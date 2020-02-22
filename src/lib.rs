@@ -156,7 +156,7 @@ use core::marker::PhantomData;
 /// bucket_index(i) = i / N
 /// entry_index(i) = i % N
 /// ```
-#[derive(Debug, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, PartialOrd, Ord, Hash)]
 pub struct BucketVec<T, C = DefaultConfig> {
     /// The number of elements stored in the bucket vector.
     len: usize,
@@ -187,6 +187,11 @@ where
         self.iter().zip(other.iter()).all(|(lhs, rhs)| lhs == rhs)
     }
 }
+
+impl<T, C> Eq for BucketVec<T, C>
+where
+    T: Eq
+{}
 
 /// Accessor into a recently pushed element.
 pub struct Access<'a, T> {
