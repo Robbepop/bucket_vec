@@ -1,5 +1,5 @@
 use bucket_vec::BucketVec;
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, BatchSize, BenchmarkId, Criterion};
 
 /// A configuration for bucket vectors that has equal bucket capacities.
 #[derive(Debug, Clone)]
@@ -41,7 +41,6 @@ fn bench_bucket_vec_push(c: &mut Criterion) {
                     vec.push(0);
                 }
             });
-            black_box(vec);
         },
     );
 }
@@ -57,7 +56,6 @@ fn bench_vec_box_push(c: &mut Criterion) {
                     vec.push(Box::new(0));
                 }
             });
-            black_box(vec);
         },
     );
 }
@@ -73,14 +71,14 @@ fn bench_vec_value_push(c: &mut Criterion) {
                     vec.push(0);
                 }
             });
-            black_box(vec);
         },
     );
 }
 
 fn bench_bucket_vec_get(c: &mut Criterion) {
-    let vec = vec![0; BIG_SAMPLE_SIZE]
+    let vec = (0..BIG_SAMPLE_SIZE)
         .into_iter()
+        .map(|value| value as i32)
         .collect::<BucketVec<i32, EqualSizeConfig>>();
     c.bench_with_input(
         BenchmarkId::new("bucket_vec::get", BIG_SAMPLE_SIZE),
@@ -91,15 +89,14 @@ fn bench_bucket_vec_get(c: &mut Criterion) {
                     black_box(vec.get(i).map(|val| *val));
                 }
             });
-            black_box(vec);
         },
     );
 }
 
 fn bench_vec_box_get(c: &mut Criterion) {
-    let vec = vec![0; BIG_SAMPLE_SIZE]
+    let vec = (0..BIG_SAMPLE_SIZE)
         .into_iter()
-        .map(|value| Box::new(value))
+        .map(|value| Box::new(value as i32))
         .collect::<Vec<Box<i32>>>();
     c.bench_with_input(
         BenchmarkId::new("vec_box::get", BIG_SAMPLE_SIZE),
@@ -110,13 +107,12 @@ fn bench_vec_box_get(c: &mut Criterion) {
                     black_box(vec.get(i).map(|val| **val));
                 }
             });
-            black_box(vec);
         },
     );
 }
 
 fn bench_vec_value_get(c: &mut Criterion) {
-    let vec = vec![0; BIG_SAMPLE_SIZE].into_iter().collect::<Vec<i32>>();
+    let vec = vec![0; BIG_SAMPLE_SIZE];
     c.bench_with_input(
         BenchmarkId::new("vec_value::get", BIG_SAMPLE_SIZE),
         &vec,
@@ -126,14 +122,14 @@ fn bench_vec_value_get(c: &mut Criterion) {
                     black_box(vec.get(i).map(|val| *val));
                 }
             });
-            black_box(vec);
         },
     );
 }
 
 fn bench_bucket_vec_iter(c: &mut Criterion) {
-    let vec = vec![0; BIG_SAMPLE_SIZE]
+    let vec = (0..BIG_SAMPLE_SIZE)
         .into_iter()
+        .map(|value| value as i32)
         .collect::<BucketVec<i32, QuadraticConfig>>();
     c.bench_with_input(
         BenchmarkId::new("bucket_vec::iter", BIG_SAMPLE_SIZE),
@@ -144,15 +140,14 @@ fn bench_bucket_vec_iter(c: &mut Criterion) {
                     black_box(*i);
                 }
             });
-            black_box(vec);
         },
     );
 }
 
 fn bench_vec_box_iter(c: &mut Criterion) {
-    let vec = vec![0; BIG_SAMPLE_SIZE]
+    let vec = (0..BIG_SAMPLE_SIZE)
         .into_iter()
-        .map(|value| Box::new(value))
+        .map(|value| Box::new(value as i32))
         .collect::<Vec<Box<i32>>>();
     c.bench_with_input(
         BenchmarkId::new("vec_box::iter", BIG_SAMPLE_SIZE),
@@ -163,15 +158,12 @@ fn bench_vec_box_iter(c: &mut Criterion) {
                     black_box(**i);
                 }
             });
-            black_box(vec);
         },
     );
 }
 
 fn bench_vec_value_iter(c: &mut Criterion) {
-    let vec = vec![0; BIG_SAMPLE_SIZE]
-        .into_iter()
-        .collect::<Vec<i32>>();
+    let vec = vec![0; BIG_SAMPLE_SIZE];
     c.bench_with_input(
         BenchmarkId::new("vec_value::iter", BIG_SAMPLE_SIZE),
         &vec,
@@ -181,15 +173,15 @@ fn bench_vec_value_iter(c: &mut Criterion) {
                     black_box(*i);
                 }
             });
-            black_box(vec);
         },
     );
 }
 
 fn bench_bucket_vec_iter_rev(c: &mut Criterion) {
-    let vec = vec![0; BIG_SAMPLE_SIZE]
+    let vec = (0..BIG_SAMPLE_SIZE)
         .into_iter()
-        .collect::<BucketVec<i32, EqualSizeConfig>>();
+        .map(|value| value as i32)
+        .collect::<BucketVec<i32, QuadraticConfig>>();
     c.bench_with_input(
         BenchmarkId::new("bucket_vec::iter.rev()", BIG_SAMPLE_SIZE),
         &vec,
@@ -199,15 +191,14 @@ fn bench_bucket_vec_iter_rev(c: &mut Criterion) {
                     black_box(*i);
                 }
             });
-            black_box(vec);
         },
     );
 }
 
 fn bench_vec_box_iter_rev(c: &mut Criterion) {
-    let vec = vec![0; BIG_SAMPLE_SIZE]
+    let vec = (0..BIG_SAMPLE_SIZE)
         .into_iter()
-        .map(|value| Box::new(value))
+        .map(|value| Box::new(value as i32))
         .collect::<Vec<Box<i32>>>();
     c.bench_with_input(
         BenchmarkId::new("vec_box::iter.rev()", BIG_SAMPLE_SIZE),
@@ -218,15 +209,12 @@ fn bench_vec_box_iter_rev(c: &mut Criterion) {
                     black_box(**i);
                 }
             });
-            black_box(vec);
         },
     );
 }
 
 fn bench_vec_value_iter_rev(c: &mut Criterion) {
-    let vec = vec![0; BIG_SAMPLE_SIZE]
-        .into_iter()
-        .collect::<Vec<i32>>();
+    let vec = vec![0; BIG_SAMPLE_SIZE];
     c.bench_with_input(
         BenchmarkId::new("vec_value::iter.rev()", BIG_SAMPLE_SIZE),
         &vec,
@@ -236,7 +224,9 @@ fn bench_vec_value_iter_rev(c: &mut Criterion) {
                     black_box(*i);
                 }
             });
-            black_box(vec);
+        },
+    );
+}
         },
     );
 }
