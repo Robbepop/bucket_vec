@@ -15,7 +15,7 @@ pub trait BucketVecConfig {
 }
 
 /// The default configuration for bucket vectors.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug)]
 pub enum DefaultConfig {}
 
 impl BucketVecConfig for DefaultConfig {
