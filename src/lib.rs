@@ -156,7 +156,7 @@ use core::marker::PhantomData;
 /// bucket_index(i) = i / N
 /// entry_index(i) = i % N
 /// ```
-#[derive(Debug, PartialOrd, Ord, Hash)]
+#[derive(Debug, Hash)]
 pub struct BucketVec<T, C = DefaultConfig> {
     /// The number of elements stored in the bucket vector.
     len: usize,
@@ -192,6 +192,36 @@ impl<T, C> Eq for BucketVec<T, C>
 where
     T: Eq
 {}
+
+impl<T, C> core::cmp::PartialOrd for BucketVec<T, C>
+where
+    T: core::cmp::PartialOrd,
+{
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        for (lhs, rhs) in self.iter().zip(other.iter()) {
+            match lhs.partial_cmp(rhs) {
+                Some(core::cmp::Ordering::Equal) => (),
+                non_eq => return non_eq,
+            }
+        }
+        self.len().partial_cmp(&other.len())
+    }
+}
+
+impl<T, C> core::cmp::Ord for BucketVec<T, C>
+where
+    T: core::cmp::Ord,
+{
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        for (lhs, rhs) in self.iter().zip(other.iter()) {
+            match lhs.cmp(rhs) {
+                core::cmp::Ordering::Equal => (),
+                non_eq => return non_eq,
+            }
+        }
+        self.len().cmp(&other.len())
+    }
+}
 
 /// Accessor into a recently pushed element.
 pub struct Access<'a, T> {
