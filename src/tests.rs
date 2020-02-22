@@ -61,6 +61,17 @@ impl BucketVecConfig for C3G1x5Config {
     const GROWTH_RATE: f64 = 1.5;
 }
 
+/// A crazy PI config for bucket vectors to drive to limits.
+#[derive(Debug)]
+pub enum CrazyPiConfig {}
+
+impl BucketVecConfig for CrazyPiConfig {
+    /// The first bucket has a capacity of approximately PI.
+    const STARTING_CAPACITY: usize = 3;
+    /// The next bucket is always PI larger.
+    const GROWTH_RATE: f64 = 3.14159265;
+}
+
 macro_rules! create_test_for_configs {
     ( $test_fn:ident ) => {
         paste::item! {
@@ -112,6 +123,16 @@ macro_rules! create_test_for_configs {
             #[test]
             fn [<$test_fn _c3g1x5_config_big>]() {
                 $test_fn::<C3G1x5Config>(big_test_values())
+            }
+
+            #[test]
+            fn [<$test_fn _crazy_pi_config_small>]() {
+                $test_fn::<CrazyPiConfig>(small_test_values())
+            }
+
+            #[test]
+            fn [<$test_fn _crazy_pi_config_big>]() {
+                $test_fn::<CrazyPiConfig>(big_test_values())
             }
         }
     };
