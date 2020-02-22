@@ -92,11 +92,15 @@ macro_rules! create_test_for_configs {
     };
 }
 
+fn small_test_values() -> Vec<i32> {
+    vec![5, 42, 1337, -1, 0, 7, 66, 12, 1, 2, 3, 1]
+}
+
 fn filled_dummy_vec<C>() -> BucketVec<i32, C>
 where
     C: BucketVecConfig,
 {
-    vec![5, 42, 1337, -1, 0, 7, 66, 12, 1, 2, 3, 1].into_iter().collect()
+    small_test_values().into_iter().collect()
 }
 
 fn new_works_for<C>()
@@ -116,19 +120,10 @@ where
     C: BucketVecConfig,
 {
     let mut vec = <BucketVec<i32, C>>::new();
-    assert_eq!(vec.len(), 0);
-    vec.push(5);
-    vec.push(42);
-    vec.push(1337);
-    vec.push(-1);
-    vec.push(0);
-    vec.push(7);
-    vec.push(66);
-    vec.push(12);
-    vec.push(1);
-    vec.push(2);
-    vec.push(3);
-    vec.push(1);
+    for (i, value) in small_test_values().into_iter().enumerate() {
+        assert_eq!(vec.len(), i);
+        vec.push(value);
+    }
     assert_eq!(vec.len(), 12);
 }
 create_test_for_configs!(push_works_for);
@@ -138,19 +133,11 @@ where
     C: BucketVecConfig,
 {
     let vec = filled_dummy_vec::<C>();
+    let mut expected = small_test_values().into_iter();
     let mut iter = vec.iter();
-    assert_eq!(iter.next(), Some(&5));
-    assert_eq!(iter.next(), Some(&42));
-    assert_eq!(iter.next(), Some(&1337));
-    assert_eq!(iter.next(), Some(&-1));
-    assert_eq!(iter.next(), Some(&0));
-    assert_eq!(iter.next(), Some(&7));
-    assert_eq!(iter.next(), Some(&66));
-    assert_eq!(iter.next(), Some(&12));
-    assert_eq!(iter.next(), Some(&1));
-    assert_eq!(iter.next(), Some(&2));
-    assert_eq!(iter.next(), Some(&3));
-    assert_eq!(iter.next(), Some(&1));
+    for _ in 0..iter.len() {
+        assert_eq!(iter.next().cloned(), expected.next());
+    }
     assert_eq!(iter.next(), None);
 }
 create_test_for_configs!(iter_next_works_for);
@@ -160,20 +147,12 @@ where
     C: BucketVecConfig,
 {
     let vec = filled_dummy_vec::<C>();
+    let mut expected = small_test_values().into_iter();
     let mut iter = vec.iter();
-    assert_eq!(iter.next_back(), Some(&1));
-    assert_eq!(iter.next_back(), Some(&3));
-    assert_eq!(iter.next_back(), Some(&2));
-    assert_eq!(iter.next_back(), Some(&1));
-    assert_eq!(iter.next_back(), Some(&12));
-    assert_eq!(iter.next_back(), Some(&66));
-    assert_eq!(iter.next_back(), Some(&7));
-    assert_eq!(iter.next_back(), Some(&0));
-    assert_eq!(iter.next_back(), Some(&-1));
-    assert_eq!(iter.next_back(), Some(&1337));
-    assert_eq!(iter.next_back(), Some(&42));
-    assert_eq!(iter.next_back(), Some(&5));
-    assert_eq!(iter.next(), None);
+    for _ in 0..iter.len() {
+        assert_eq!(iter.next_back().cloned(), expected.next_back());
+    }
+    assert_eq!(iter.next_back(), None);
 }
 create_test_for_configs!(iter_next_back_works);
 
@@ -182,21 +161,19 @@ where
     C: BucketVecConfig,
 {
     let vec = filled_dummy_vec::<C>();
+    let mut expected = small_test_values().into_iter();
     let mut iter = vec.iter();
 
-    assert_eq!(iter.next(), Some(&5));
-    assert_eq!(iter.next_back(), Some(&1));
-    assert_eq!(iter.next(), Some(&42));
-    assert_eq!(iter.next_back(), Some(&3));
-    assert_eq!(iter.next(), Some(&1337));
-    assert_eq!(iter.next_back(), Some(&2));
-    assert_eq!(iter.next(), Some(&-1));
-    assert_eq!(iter.next_back(), Some(&1));
-    assert_eq!(iter.next(), Some(&0));
-    assert_eq!(iter.next_back(), Some(&12));
-    assert_eq!(iter.next(), Some(&7));
-    assert_eq!(iter.next_back(), Some(&66));
-
+    for step in 0..iter.len() {
+        if step % 2 == 0 {
+            // For every even step get `next`:
+            assert_eq!(iter.next().cloned(), expected.next());
+        } else {
+            // For every odd step get `next_back`:
+            assert_eq!(iter.next_back().cloned(), expected.next_back());
+        }
+    }
+    // At the end `iter` should be empty:
     assert_eq!(iter.next(), None);
     assert_eq!(iter.next_back(), None);
 }
@@ -207,9 +184,11 @@ where
     C: BucketVecConfig,
 {
     let mut vec = <BucketVec<i32, C>>::new();
-    assert_eq!(vec.push_get(1).index(), 0);
-    assert_eq!(vec.push_get(2).into_ref(), &2);
-    assert_eq!(vec.push_get(3).into_mut(), &mut 3);
+    for (n, expected) in small_test_values().into_iter().enumerate() {
+        assert_eq!(vec.push_get(expected).index(), 3 * n);
+        assert_eq!(vec.push_get(expected).into_ref(), &expected);
+        assert_eq!(vec.push_get(expected).into_mut(), &mut expected.clone());
+    }
 }
 create_test_for_configs!(access_works_for);
 
@@ -218,19 +197,10 @@ where
     C: BucketVecConfig,
 {
     let vec = filled_dummy_vec::<C>();
-    assert_eq!(vec.get(0), Some(&5));
-    assert_eq!(vec.get(1), Some(&42));
-    assert_eq!(vec.get(2), Some(&1337));
-    assert_eq!(vec.get(3), Some(&-1));
-    assert_eq!(vec.get(4), Some(&0));
-    assert_eq!(vec.get(5), Some(&7));
-    assert_eq!(vec.get(6), Some(&66));
-    assert_eq!(vec.get(7), Some(&12));
-    assert_eq!(vec.get(8), Some(&1));
-    assert_eq!(vec.get(9), Some(&2));
-    assert_eq!(vec.get(10), Some(&3));
-    assert_eq!(vec.get(11), Some(&1));
-    assert_eq!(vec.get(12), None);
+    for (n, expected) in small_test_values().into_iter().enumerate() {
+        assert_eq!(vec.get(n), Some(&expected));
+    }
+    assert_eq!(vec.get(vec.len()), None);
 }
 create_test_for_configs!(get_works_for);
 
@@ -239,18 +209,9 @@ where
     C: BucketVecConfig,
 {
     let mut vec = filled_dummy_vec::<C>();
-    assert_eq!(vec.get_mut(0), Some(&mut 5));
-    assert_eq!(vec.get_mut(1), Some(&mut 42));
-    assert_eq!(vec.get_mut(2), Some(&mut 1337));
-    assert_eq!(vec.get_mut(3), Some(&mut -1));
-    assert_eq!(vec.get_mut(4), Some(&mut 0));
-    assert_eq!(vec.get_mut(5), Some(&mut 7));
-    assert_eq!(vec.get_mut(6), Some(&mut 66));
-    assert_eq!(vec.get_mut(7), Some(&mut 12));
-    assert_eq!(vec.get_mut(8), Some(&mut 1));
-    assert_eq!(vec.get_mut(9), Some(&mut 2));
-    assert_eq!(vec.get_mut(10), Some(&mut 3));
-    assert_eq!(vec.get_mut(11), Some(&mut 1));
-    assert_eq!(vec.get_mut(12), None);
+    for (n, mut expected) in small_test_values().into_iter().enumerate() {
+        assert_eq!(vec.get_mut(n), Some(&mut expected));
+    }
+    assert_eq!(vec.get_mut(vec.len()), None);
 }
 create_test_for_configs!(get_mut_works_for);
