@@ -66,27 +66,27 @@ macro_rules! create_test_for_configs {
         paste::item! {
             #[test]
             fn [<$test_fn _quadratic_config>]() {
-                $test_fn::<QuadraticConfig>()
+                $test_fn::<QuadraticConfig>(small_test_values())
             }
 
             #[test]
             fn [<$test_fn _cubic_config>]() {
-                $test_fn::<CubicConfig>()
+                $test_fn::<CubicConfig>(small_test_values())
             }
 
             #[test]
             fn [<$test_fn _equal_size_config>]() {
-                $test_fn::<EqualSizeConfig>()
+                $test_fn::<EqualSizeConfig>(small_test_values())
             }
 
             #[test]
             fn [<$test_fn _wasteful_config>]() {
-                $test_fn::<WastefulConfig>()
+                $test_fn::<WastefulConfig>(small_test_values())
             }
 
             #[test]
             fn [<$test_fn _c3g1x5_config>]() {
-                $test_fn::<C3G1x5Config>()
+                $test_fn::<C3G1x5Config>(small_test_values())
             }
         }
     };
@@ -96,14 +96,17 @@ fn small_test_values() -> Vec<i32> {
     vec![5, 42, 1337, -1, 0, 7, 66, 12, 1, 2, 3, 1]
 }
 
-fn filled_dummy_vec<C>() -> BucketVec<i32, C>
-where
-    C: BucketVecConfig,
-{
-    small_test_values().into_iter().collect()
+fn big_test_values() -> Vec<i32> {
+    let mut vec = Vec::new();
+    let mut rng = rand::thread_rng();
+    use rand::Rng as _;
+    for _ in 0..10 {
+        vec.push(rng.gen());
+    }
+    vec
 }
 
-fn new_works_for<C>()
+fn new_works_for<C>(_test_values: Vec<i32>)
 where
     C: BucketVecConfig,
 {
@@ -115,12 +118,12 @@ where
 }
 create_test_for_configs!(new_works_for);
 
-fn push_works_for<C>()
+fn push_works_for<C>(test_values: Vec<i32>)
 where
     C: BucketVecConfig,
 {
     let mut vec = <BucketVec<i32, C>>::new();
-    for (i, value) in small_test_values().into_iter().enumerate() {
+    for (i, value) in test_values.into_iter().enumerate() {
         assert_eq!(vec.len(), i);
         vec.push(value);
     }
@@ -128,12 +131,12 @@ where
 }
 create_test_for_configs!(push_works_for);
 
-fn iter_next_works_for<C>()
+fn iter_next_works_for<C>(test_values: Vec<i32>)
 where
     C: BucketVecConfig,
 {
-    let vec = filled_dummy_vec::<C>();
-    let mut expected = small_test_values().into_iter();
+    let vec = test_values.iter().cloned().collect::<BucketVec<_>>();
+    let mut expected = test_values.into_iter();
     let mut iter = vec.iter();
     for _ in 0..iter.len() {
         assert_eq!(iter.next().cloned(), expected.next());
@@ -142,12 +145,12 @@ where
 }
 create_test_for_configs!(iter_next_works_for);
 
-fn iter_next_back_works<C>()
+fn iter_next_back_works<C>(test_values: Vec<i32>)
 where
     C: BucketVecConfig,
 {
-    let vec = filled_dummy_vec::<C>();
-    let mut expected = small_test_values().into_iter();
+    let vec = test_values.iter().cloned().collect::<BucketVec<_>>();
+    let mut expected = test_values.into_iter();
     let mut iter = vec.iter();
     for _ in 0..iter.len() {
         assert_eq!(iter.next_back().cloned(), expected.next_back());
@@ -156,12 +159,12 @@ where
 }
 create_test_for_configs!(iter_next_back_works);
 
-fn iter_next_meet_middle_works_for<C>()
+fn iter_next_meet_middle_works_for<C>(test_values: Vec<i32>)
 where
     C: BucketVecConfig,
 {
-    let vec = filled_dummy_vec::<C>();
-    let mut expected = small_test_values().into_iter();
+    let vec = test_values.iter().cloned().collect::<BucketVec<_>>();
+    let mut expected = test_values.into_iter();
     let mut iter = vec.iter();
 
     for step in 0..iter.len() {
@@ -179,12 +182,12 @@ where
 }
 create_test_for_configs!(iter_next_meet_middle_works_for);
 
-fn access_works_for<C>()
+fn access_works_for<C>(test_values: Vec<i32>)
 where
     C: BucketVecConfig,
 {
     let mut vec = <BucketVec<i32, C>>::new();
-    for (n, expected) in small_test_values().into_iter().enumerate() {
+    for (n, expected) in test_values.into_iter().enumerate() {
         assert_eq!(vec.push_get(expected).index(), 3 * n);
         assert_eq!(vec.push_get(expected).into_ref(), &expected);
         assert_eq!(vec.push_get(expected).into_mut(), &mut expected.clone());
@@ -192,24 +195,24 @@ where
 }
 create_test_for_configs!(access_works_for);
 
-fn get_works_for<C>()
+fn get_works_for<C>(test_values: Vec<i32>)
 where
     C: BucketVecConfig,
 {
-    let vec = filled_dummy_vec::<C>();
-    for (n, expected) in small_test_values().into_iter().enumerate() {
+    let vec = test_values.iter().cloned().collect::<BucketVec<_>>();
+    for (n, expected) in test_values.into_iter().enumerate() {
         assert_eq!(vec.get(n), Some(&expected));
     }
     assert_eq!(vec.get(vec.len()), None);
 }
 create_test_for_configs!(get_works_for);
 
-fn get_mut_works_for<C>()
+fn get_mut_works_for<C>(test_values: Vec<i32>)
 where
     C: BucketVecConfig,
 {
-    let mut vec = filled_dummy_vec::<C>();
-    for (n, mut expected) in small_test_values().into_iter().enumerate() {
+    let mut vec = test_values.iter().cloned().collect::<BucketVec<_>>();
+    for (n, mut expected) in test_values.into_iter().enumerate() {
         assert_eq!(vec.get_mut(n), Some(&mut expected));
     }
     assert_eq!(vec.get_mut(vec.len()), None);
