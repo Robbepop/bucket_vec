@@ -1,7 +1,7 @@
 use super::{Bucket, BucketVec};
 
 /// An iterator over the elements of a bucket vector.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Iter<'a, T> {
     /// Buckets iterator.
     buckets: core::slice::Iter<'a, Bucket<T>>,
