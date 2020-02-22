@@ -5,6 +5,7 @@ Release history for `bucket_vec` crate.
 ## 0.5 - 2020-02-23
 
 - Add derive for `Clone` for `BucketVec`
+- Add `BucketVec::iter_mut`
 - Improve performance of `BucketVec::iter`
 - Restructured crate slightly
 
