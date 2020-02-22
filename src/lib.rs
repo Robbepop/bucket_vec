@@ -156,7 +156,7 @@ use core::marker::PhantomData;
 /// bucket_index(i) = i / N
 /// entry_index(i) = i % N
 /// ```
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct BucketVec<T, C = DefaultConfig> {
     /// The number of elements stored in the bucket vector.
     len: usize,

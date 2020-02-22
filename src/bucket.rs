@@ -3,7 +3,7 @@
 use alloc::vec::Vec;
 
 /// An fixed capacity bucket within the bucket vector.
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Bucket<T> {
     /// The entries of this bucket.
     entries: Vec<T>,
