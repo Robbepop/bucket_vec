@@ -178,17 +178,25 @@ where
 }
 create_test_for_configs!(push_works_for);
 
+/// Asserts that the two given iterators yield the same elements.
+fn assert_iter_eq<I1, I2, T>(iter1: I1, iter2: I2)
+where
+    I1: Iterator<Item = T> + ExactSizeIterator,
+    I2: Iterator<Item = T> + ExactSizeIterator,
+    T: core::fmt::Debug + PartialEq,
+{
+    assert_eq!(iter1.len(), iter2.len());
+    for (elem1, elem2) in iter1.zip(iter2) {
+        assert_eq!(elem1, elem2);
+    }
+}
+
 fn iter_next_works_for<C>(test_values: Vec<i32>)
 where
     C: BucketVecConfig,
 {
     let vec = test_values.iter().cloned().collect::<BucketVec<_>>();
-    let mut expected = test_values.into_iter();
-    let mut iter = vec.iter();
-    for _ in 0..iter.len() {
-        assert_eq!(iter.next().cloned(), expected.next());
-    }
-    assert_eq!(iter.next(), None);
+    assert_iter_eq(vec.iter(), test_values.iter());
 }
 create_test_for_configs!(iter_next_works_for);
 
@@ -197,12 +205,7 @@ where
     C: BucketVecConfig,
 {
     let vec = test_values.iter().cloned().collect::<BucketVec<_>>();
-    let mut expected = test_values.into_iter();
-    let mut iter = vec.iter();
-    for _ in 0..iter.len() {
-        assert_eq!(iter.next_back().cloned(), expected.next_back());
-    }
-    assert_eq!(iter.next_back(), None);
+    assert_iter_eq(vec.iter().rev(), test_values.iter().rev());
 }
 create_test_for_configs!(iter_next_back_works);
 
@@ -211,16 +214,16 @@ where
     C: BucketVecConfig,
 {
     let vec = test_values.iter().cloned().collect::<BucketVec<_>>();
-    let mut expected = test_values.into_iter();
+    let mut expected = test_values.iter();
     let mut iter = vec.iter();
-
+    // Lock-step get `next` and `next_back` from iterators.
     for step in 0..iter.len() {
         if step % 2 == 0 {
             // For every even step get `next`:
-            assert_eq!(iter.next().cloned(), expected.next());
+            assert_eq!(iter.next(), expected.next());
         } else {
             // For every odd step get `next_back`:
-            assert_eq!(iter.next_back().cloned(), expected.next_back());
+            assert_eq!(iter.next_back(), expected.next_back());
         }
     }
     // At the end `iter` should be empty:
@@ -228,6 +231,47 @@ where
     assert_eq!(iter.next_back(), None);
 }
 create_test_for_configs!(iter_next_meet_middle_works_for);
+
+fn iter_mut_next_works_for<C>(mut test_values: Vec<i32>)
+where
+    C: BucketVecConfig,
+{
+    let mut vec = test_values.iter().cloned().collect::<BucketVec<_>>();
+    assert_iter_eq(vec.iter_mut(), test_values.iter_mut());
+}
+create_test_for_configs!(iter_mut_next_works_for);
+
+fn iter_mut_next_back_works_for<C>(mut test_values: Vec<i32>)
+where
+    C: BucketVecConfig,
+{
+    let mut vec = test_values.iter().cloned().collect::<BucketVec<_>>();
+    assert_iter_eq(vec.iter_mut().rev(), test_values.iter_mut().rev());
+}
+create_test_for_configs!(iter_mut_next_back_works_for);
+
+fn iter_mut_next_meet_middle_works_for<C>(mut test_values: Vec<i32>)
+where
+    C: BucketVecConfig,
+{
+    let mut vec = test_values.iter().cloned().collect::<BucketVec<_>>();
+    let mut expected = test_values.iter_mut();
+    let mut iter = vec.iter_mut();
+    // Lock-step get `next` and `next_back` from iterators.
+    for step in 0..iter.len() {
+        if step % 2 == 0 {
+            // For every even step get `next`:
+            assert_eq!(iter.next(), expected.next());
+        } else {
+            // For every odd step get `next_back`:
+            assert_eq!(iter.next_back(), expected.next_back());
+        }
+    }
+    // At the end `iter` should be empty:
+    assert_eq!(iter.next(), None);
+    assert_eq!(iter.next_back(), None);
+}
+create_test_for_configs!(iter_mut_next_meet_middle_works_for);
 
 fn access_works_for<C>(test_values: Vec<i32>)
 where
