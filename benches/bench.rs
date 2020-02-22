@@ -321,8 +321,9 @@ criterion_group!(
     bench_vec_value_iter_mut,
 );
 criterion_main!(
-    // bench_push,
-    // bench_get,
-    // bench_iter,
-    // bench_iter_rev,
+    bench_push,
+    bench_get,
+    bench_iter,
+    bench_iter_rev,
+    bench_iter_mut,
 );
