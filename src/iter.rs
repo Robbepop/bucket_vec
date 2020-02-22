@@ -83,3 +83,80 @@ impl<'a, T> ExactSizeIterator for Iter<'a, T> {
         self.vec_len - self.total_iterated
     }
 }
+
+/// An iterator over the elements of a bucket vector.
+#[derive(Debug)]
+pub struct IterMut<'a, T> {
+    /// Buckets iterator used by forward iteration.
+    buckets: core::slice::IterMut<'a, Bucket<T>>,
+    /// Front iterator for `next`.
+    front_iter: Option<core::slice::IterMut<'a, T>>,
+    /// Back iterator for `next_back`.
+    back_iter: Option<core::slice::IterMut<'a, T>>,
+    /// Total iterated elements.
+    total_iterated: usize,
+    /// The total length of the iterated bucket vector.
+    vec_len: usize,
+}
+
+impl<'a, T> IterMut<'a, T> {
+    /// Creates a new iterator over the bucket vector.
+    pub fn new<C>(vec: &'a mut BucketVec<T, C>) -> Self {
+        let vec_len = vec.len();
+        Self {
+            buckets: vec.buckets.iter_mut(),
+            front_iter: None,
+            back_iter: None,
+            total_iterated: 0,
+            vec_len,
+        }
+    }
+}
+
+impl<'a, T> Iterator for IterMut<'a, T> {
+    type Item = &'a mut T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        loop {
+            if let Some(ref mut front_iter) = self.front_iter {
+                if let front @ Some(_) = front_iter.next() {
+                    self.total_iterated += 1;
+                    return front;
+                }
+            }
+            match self.buckets.next() {
+                None => {
+                    self.total_iterated += 1;
+                    return self.back_iter.as_mut()?.next()
+                }
+                Some(inner) => self.front_iter = Some(inner.iter_mut()),
+            }
+        }
+    }
+}
+
+impl<'a, T> DoubleEndedIterator for IterMut<'a, T> {
+    fn next_back(&mut self) -> Option<Self::Item> {
+        loop {
+            if let Some(ref mut back_iter) = self.back_iter {
+                if let back @ Some(_) = back_iter.next_back() {
+                    self.total_iterated += 1;
+                    return back;
+                }
+            }
+            match self.buckets.next_back() {
+                None => {
+                    self.total_iterated += 1;
+                    return self.front_iter.as_mut()?.next()
+                }
+                Some(inner) => self.back_iter = Some(inner.iter_mut()),
+            }
+        }
+    }
+}
+
+impl<'a, T> ExactSizeIterator for IterMut<'a, T> {
+    fn len(&self) -> usize {
+        self.vec_len - self.total_iterated
+    }
+}

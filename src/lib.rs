@@ -80,7 +80,7 @@ use self::bucket::Bucket;
 use self::math::FloatExt;
 pub use self::{
     config::{BucketVecConfig, DefaultConfig},
-    iter::Iter,
+    iter::{Iter, IterMut},
 };
 use core::marker::PhantomData;
 
@@ -229,6 +229,10 @@ impl<T, C> BucketVec<T, C> {
     /// Returns an iterator that yields shared references to the elements of the bucket vector.
     pub fn iter(&self) -> Iter<T> {
         Iter::new(self)
+    }
+
+    pub fn iter_mut(&mut self) -> IterMut<T> {
+        IterMut::new(self)
     }
 }
 

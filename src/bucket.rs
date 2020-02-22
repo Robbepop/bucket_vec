@@ -73,6 +73,11 @@ impl<T> Bucket<T> {
     pub fn iter(&self) -> core::slice::Iter<T> {
         self.entries.iter()
     }
+
+    /// Returns an iterator over the entries of the bucket.
+    pub fn iter_mut(&mut self) -> core::slice::IterMut<T> {
+        self.entries.iter_mut()
+    }
 }
 
 impl<T> core::ops::Index<usize> for Bucket<T> {
