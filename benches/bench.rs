@@ -314,6 +314,12 @@ criterion_group!(
     bench_vec_box_iter_rev,
     bench_vec_value_iter_rev,
 );
+criterion_group!(
+    bench_iter_mut,
+    bench_bucket_vec_iter_mut,
+    bench_vec_box_iter_mut,
+    bench_vec_value_iter_mut,
+);
 criterion_main!(
     // bench_push,
     // bench_get,
