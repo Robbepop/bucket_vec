@@ -2,7 +2,7 @@ use bucket_vec::BucketVec;
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 
 /// A configuration for bucket vectors that has equal bucket capacities.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum EqualSizeConfig {}
 
 impl bucket_vec::BucketVecConfig for EqualSizeConfig {
@@ -11,7 +11,7 @@ impl bucket_vec::BucketVecConfig for EqualSizeConfig {
 }
 
 /// A configuration for bucket vectors that tries to balance out interests.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum C5g1x5Config {}
 
 impl bucket_vec::BucketVecConfig for C5g1x5Config {
@@ -20,7 +20,7 @@ impl bucket_vec::BucketVecConfig for C5g1x5Config {
 }
 
 /// A configuration for bucket vectors that grows quadratically.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum QuadraticConfig {}
 
 impl bucket_vec::BucketVecConfig for QuadraticConfig {
