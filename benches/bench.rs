@@ -134,7 +134,7 @@ fn bench_vec_value_get(c: &mut Criterion) {
 fn bench_bucket_vec_iter(c: &mut Criterion) {
     let vec = vec![0; BIG_SAMPLE_SIZE]
         .into_iter()
-        .collect::<BucketVec<i32, EqualSizeConfig>>();
+        .collect::<BucketVec<i32, QuadraticConfig>>();
     c.bench_with_input(
         BenchmarkId::new("bucket_vec::iter", BIG_SAMPLE_SIZE),
         &vec,
