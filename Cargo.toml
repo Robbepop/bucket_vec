@@ -1,6 +1,6 @@
 [package]
 name = "bucket_vec"
-version = "0.4"
+version = "0.4.0"
 authors = ["Robin Freyler <robin.freyler@gmail.com>"]
 edition = "2018"
 repository = "https://github.com/Robbepop/bucket_vec"
