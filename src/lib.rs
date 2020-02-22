@@ -156,7 +156,7 @@ use core::marker::PhantomData;
 /// bucket_index(i) = i / N
 /// entry_index(i) = i % N
 /// ```
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct BucketVec<T, C = DefaultConfig> {
     /// The number of elements stored in the bucket vector.
     len: usize,
@@ -164,6 +164,19 @@ pub struct BucketVec<T, C = DefaultConfig> {
     buckets: Vec<Bucket<T>>,
     /// The config phantom data.
     config: PhantomData<fn() -> C>,
+}
+
+impl<T, C> Clone for BucketVec<T, C>
+where
+    T: Clone,
+{
+    fn clone(&self) -> Self {
+        Self {
+            len: self.len(),
+            buckets: self.buckets.clone(),
+            config: Default::default(),
+        }
+    }
 }
 
 /// Accessor into a recently pushed element.
