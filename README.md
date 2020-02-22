@@ -122,7 +122,6 @@ vec_value::iter.rev()/10000  time:   [3.5827 us 3.5944 us 3.6080 us]
 bucket_vec::iter_mut/10000   time:   [5.0533 us 5.0710 us 5.0909 us]
 vec_box::iter_mut/10000      time:   [13.425 us 13.845 us 14.203 us]
 vec_value::iter_mut/10000    time:   [4.0172 us 4.0473 us 4.0820 us]
-
 ```
 
 It can be seen that `BucketVec` greatly outperforms `Vec<Box<_>>` on
