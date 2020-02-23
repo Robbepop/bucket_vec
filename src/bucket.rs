@@ -2,6 +2,12 @@
 #[cfg(not(feature = "std"))]
 use alloc::vec::Vec;
 
+#[cfg(feature = "std")]
+use std::vec;
+
+#[cfg(not(feature = "std"))]
+use alloc::vec;
+
 /// An fixed capacity bucket within the bucket vector.
 #[derive(Debug, Clone)]
 pub struct Bucket<T> {
@@ -77,6 +83,15 @@ impl<T> Bucket<T> {
     /// Returns an iterator over the entries of the bucket.
     pub fn iter_mut(&mut self) -> core::slice::IterMut<T> {
         self.entries.iter_mut()
+    }
+}
+
+impl<T> IntoIterator for Bucket<T> {
+    type Item = T;
+    type IntoIter = vec::IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.entries.into_iter()
     }
 }
 

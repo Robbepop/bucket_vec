@@ -80,7 +80,7 @@ use self::bucket::Bucket;
 use self::math::FloatExt;
 pub use self::{
     config::{BucketVecConfig, DefaultConfig},
-    iter::{Iter, IterMut},
+    iter::{Iter, IterMut, IntoIter},
 };
 use core::marker::PhantomData;
 
@@ -164,6 +164,15 @@ pub struct BucketVec<T, C = DefaultConfig> {
     buckets: Vec<Bucket<T>>,
     /// The config phantom data.
     config: PhantomData<fn() -> C>,
+}
+
+impl<T, C> IntoIterator for BucketVec<T, C> {
+    type Item = T;
+    type IntoIter = IntoIter<T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIter::new(self)
+    }
 }
 
 impl<T, C> Clone for BucketVec<T, C>
