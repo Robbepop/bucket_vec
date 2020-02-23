@@ -2,6 +2,19 @@
 
 Release history for `bucket_vec` crate.
 
+## 0.6 - 2020-02-23
+
+- Losen trait bound constraints for
+    - `Clone`
+    - `PartialEq`
+    - `Eq`
+    - `PartialOrd`
+    - `Ord`
+    - `Hash`
+
+    trait implementations of `BucketVec`.
+- Implement `IntoIterator` for `BucketVec`
+
 ## 0.5 - 2020-02-23
 
 - Add derive for `Clone` for `BucketVec`
