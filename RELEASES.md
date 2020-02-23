@@ -2,6 +2,12 @@
 
 Release history for `bucket_vec` crate.
 
+## 0.7 - 2020-02-23
+
+- Implement `IntoIterator` for `&BucketVec` and `&mut BucketVec`
+- Implement `parity-scale-codec::{Encode, Decode}` for `BucketVec`
+    - Opt-in crate feature: `scale-1`
+
 ## 0.6 - 2020-02-23
 
 - Losen trait bound constraints for
