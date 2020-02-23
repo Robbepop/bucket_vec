@@ -270,7 +270,7 @@ pub struct Access<'a, T> {
 
 impl<'a, T> Access<'a, T> {
     /// Creates a new accessor to the given index and reference.
-    pub fn new(index: usize, reference: &'a mut T) -> Self {
+    pub(crate) fn new(index: usize, reference: &'a mut T) -> Self {
         Self { index, reference }
     }
 
