@@ -15,6 +15,7 @@ categories = ["data-structures"]
 [dependencies]
 # Required because `no_std` Rust does not support required math operations.
 libm = { version = "0.2", default-features = false }
+scale = { version = "1.1", default-features = false, package = "parity-scale-codec", optional = true }
 
 [dev-dependencies]
 paste = "0.1.6"
@@ -26,8 +27,13 @@ name = "bench"
 harness = false
 
 [features]
-default = ["std"]
-std = []
+default = ["std", "scale-1"]
+std = [
+    "scale/std",
+]
 nightly = [
     "criterion/real_blackbox",
+]
+scale-1 = [
+    "scale"
 ]

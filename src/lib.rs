@@ -72,6 +72,7 @@ mod bucket;
 mod config;
 mod iter;
 mod math;
+mod scale;
 
 #[cfg(test)]
 mod tests;
