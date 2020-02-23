@@ -175,6 +175,24 @@ impl<T, C> IntoIterator for BucketVec<T, C> {
     }
 }
 
+impl<'a, T, C> IntoIterator for &'a BucketVec<T, C> {
+    type Item = &'a T;
+    type IntoIter = Iter<'a, T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        Iter::new(self)
+    }
+}
+
+impl<'a, T, C> IntoIterator for &'a mut BucketVec<T, C> {
+    type Item = &'a mut T;
+    type IntoIter = IterMut<'a, T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        IterMut::new(self)
+    }
+}
+
 impl<T, C> Clone for BucketVec<T, C>
 where
     T: Clone,
