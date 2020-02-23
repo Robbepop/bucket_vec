@@ -21,7 +21,7 @@ pub struct Iter<'a, T> {
 
 impl<'a, T> Iter<'a, T> {
     /// Creates a new iterator over the bucket vector.
-    pub fn new<C>(vec: &'a BucketVec<T, C>) -> Self {
+    pub(crate) fn new<C>(vec: &'a BucketVec<T, C>) -> Self {
         Self {
             buckets: vec.buckets.iter(),
             front_iter: None,
@@ -98,7 +98,7 @@ pub struct IterMut<'a, T> {
 
 impl<'a, T> IterMut<'a, T> {
     /// Creates a new iterator over the bucket vector.
-    pub fn new<C>(vec: &'a mut BucketVec<T, C>) -> Self {
+    pub(crate) fn new<C>(vec: &'a mut BucketVec<T, C>) -> Self {
         let len = vec.len();
         Self {
             buckets: vec.buckets.iter_mut(),
@@ -176,7 +176,7 @@ pub struct IntoIter<T> {
 
 impl<T> IntoIter<T> {
     /// Creates a new iterator over the bucket vector.
-    pub fn new<C>(vec: BucketVec<T, C>) -> Self {
+    pub(crate) fn new<C>(vec: BucketVec<T, C>) -> Self {
         let len = vec.len();
         Self {
             buckets: vec.buckets.into_iter(),
