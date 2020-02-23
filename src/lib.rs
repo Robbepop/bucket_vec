@@ -80,7 +80,7 @@ use self::bucket::Bucket;
 use self::math::FloatExt;
 pub use self::{
     config::{BucketVecConfig, DefaultConfig},
-    iter::{Iter, IterMut, IntoIter},
+    iter::{IntoIter, Iter, IterMut},
 };
 use core::marker::PhantomData;
 
@@ -197,10 +197,7 @@ where
     }
 }
 
-impl<T, C> Eq for BucketVec<T, C>
-where
-    T: Eq
-{}
+impl<T, C> Eq for BucketVec<T, C> where T: Eq {}
 
 impl<T, C> core::cmp::PartialOrd for BucketVec<T, C>
 where

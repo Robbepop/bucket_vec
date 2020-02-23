@@ -6,7 +6,6 @@ use std::vec;
 #[cfg(not(feature = "std"))]
 use alloc::vec;
 
-
 /// An iterator yielding shared references to the elements of a bucket vector.
 #[derive(Debug, Clone)]
 pub struct Iter<'a, T> {
