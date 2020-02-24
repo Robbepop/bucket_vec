@@ -100,33 +100,44 @@ Note that for every of the benchmark groups (`push`, `get` and `iter`) the
 most efficient configuration for the `BucketVec` has been chosen.
 Some benchmarks (`get`) have shown significant difference between configs.
 
-The following is the output of a benchmark run:
+The following is the output of a benchmark run each operating on 10k elements.
 
 ```
-bucket_vec::push/10000       time:   [43.647 us 43.861 us 44.108 us]
-bucket_vec::push_get/10000   time:   [48.872 us 49.396 us 49.834 us]
-vec_box::push/10000          time:   [405.37 us 410.91 us 417.20 us]
-vec_value::push/10000        time:   [25.826 us 25.915 us 26.020 us]
+bucket_vec::push              time:   [43.647 us 43.861 us 44.108 us]
+bucket_vec::push_get          time:   [48.872 us 49.396 us 49.834 us]
+vec_box::push                 time:   [405.37 us 410.91 us 417.20 us]
+vec_value::push               time:   [25.826 us 25.915 us 26.020 us]
 
-bucket_vec::get/10000        time:   [17.369 us 17.416 us 17.470 us]
-vec_box::get/10000           time:   [14.446 us 14.485 us 14.537 us]
-vec_value::get/10000         time:   [8.7939 us 8.8105 us 8.8300 us]
+bucket_vec::get (fast config) time:   [17.732 us 17.782 us 17.840 us]
+bucket_vec::get (mid config)  time:   [243.95 us 244.75 us 245.66 us]
+bucket_vec::get (slow config) time:   [341.06 us 350.02 us 361.15 us]
+vec_box::get                  time:   [14.446 us 14.485 us 14.537 us]
+vec_value::get                time:   [8.7939 us 8.8105 us 8.8300 us]
 
-bucket_vec::iter/10000       time:   [4.4195 us 4.4316 us 4.4454 us]
-vec_box::iter/10000          time:   [9.5925 us 9.6246 us 9.6610 us]
-vec_value::iter/10000        time:   [3.5955 us 3.6043 us 3.6142 us]
+bucket_vec::iter              time:   [4.4195 us 4.4316 us 4.4454 us]
+vec_box::iter                 time:   [9.5925 us 9.6246 us 9.6610 us]
+vec_value::iter               time:   [3.5955 us 3.6043 us 3.6142 us]
 
-bucket_vec::iter.rev()/10000 time:   [3.9804 us 3.9957 us 4.0144 us]
-vec_box::iter.rev()/10000    time:   [9.9677 us 9.9980 us 10.033 us]
-vec_value::iter.rev()/10000  time:   [3.5827 us 3.5944 us 3.6080 us]
+bucket_vec::iter_back         time:   [3.9804 us 3.9957 us 4.0144 us]
+vec_box::iter_back            time:   [9.9677 us 9.9980 us 10.033 us]
+vec_value::iter_back          time:   [3.5827 us 3.5944 us 3.6080 us]
 
-bucket_vec::iter_mut/10000   time:   [5.0533 us 5.0710 us 5.0909 us]
-vec_box::iter_mut/10000      time:   [13.425 us 13.845 us 14.203 us]
-vec_value::iter_mut/10000    time:   [4.0172 us 4.0473 us 4.0820 us]
+bucket_vec::iter_mut          time:   [5.0533 us 5.0710 us 5.0909 us]
+vec_box::iter_mut             time:   [13.425 us 13.845 us 14.203 us]
+vec_value::iter_mut           time:   [4.0172 us 4.0473 us 4.0820 us]
 ```
 
 It can be seen that `BucketVec` greatly outperforms `Vec<Box<_>>` on
-`push`, `iter` and `iter().rev()` benchmarks.
+`push`, `iter` and `iter_back` benchmarks.
+However, for some configurations `BucketVec::get` is a lot slower than
+`Vec<Box<T>>::get`. The configurations used in the benchmark are:
+
+- `fast` config: `STARTING_CAPACITY = 16; GROWTH_RATE = 1.0;`
+- `mid`  config: `STARTING_CAPACITY =  4; GROWTH_RATE = 2.0;`
+- `slow` config: `STARTING_CAPACITY =  5; GROWTH_RATE = 1.5`
+
+For other benchmarked operations the difference in performance has not been as significant as for the `get` operation.
+
 Also `BucketVec` is approximately 50% slower than the `Vec<_>` which is the
 theoretical optimum that unfortunately doesn't solve the underlying problem.
 
