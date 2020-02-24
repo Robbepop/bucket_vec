@@ -309,8 +309,8 @@ criterion_group!(
     bench_push,
     bench_bucket_vec_push,
     bench_bucket_vec_push_get,
-    // bench_vec_box_push,
-    // bench_vec_value_push
+    bench_vec_box_push,
+    bench_vec_value_push
 );
 criterion_group!(
     bench_get,
