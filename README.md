@@ -104,6 +104,7 @@ The following is the output of a benchmark run:
 
 ```
 bucket_vec::push/10000       time:   [43.647 us 43.861 us 44.108 us]
+bucket_vec::push_get/10000   time:   [48.872 us 49.396 us 49.834 us]
 vec_box::push/10000          time:   [405.37 us 410.91 us 417.20 us]
 vec_value::push/10000        time:   [25.826 us 25.915 us 26.020 us]
 
