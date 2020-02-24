@@ -394,10 +394,9 @@ where
     pub fn push_get(&mut self, new_value: T) -> Access<T> {
         let index = self.len();
         self.push(new_value);
-        let ref_mut = self
-            .get_mut(index)
-            .expect("we just pushed an element so must be Some");
-        Access::new(index, ref_mut)
+        let len_buckets = self.buckets.len();
+        let len_entries = self.buckets[len_buckets - 1].len();
+        Access::new(index, &mut self.buckets[len_buckets - 1][len_entries - 1])
     }
 }
 
