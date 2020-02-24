@@ -362,9 +362,9 @@ where
     fn push_bucket(&mut self, new_value: T) {
         let len_buckets = self.buckets.len();
         let new_capacity = config::bucket_capacity::<C>(len_buckets);
-        let mut new_entry = Bucket::new(new_capacity);
-        new_entry.push(new_value);
-        self.buckets.push(new_entry);
+        let mut new_bucket = Bucket::new(new_capacity);
+        new_bucket.push(new_value);
+        self.buckets.push(new_bucket);
         self.len += 1;
     }
 
