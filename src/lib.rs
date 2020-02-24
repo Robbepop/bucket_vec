@@ -375,9 +375,9 @@ where
     /// This operation will never move other elements, reallocates or otherwise
     /// invalidate pointers of elements contained by the bucket vector.
     pub fn push(&mut self, new_value: T) {
-        if let Some(entry) = self.buckets.last_mut() {
-            if entry.len() < entry.capacity() {
-                entry.push(new_value);
+        if let Some(bucket) = self.buckets.last_mut() {
+            if bucket.len() < bucket.capacity() {
+                bucket.push(new_value);
                 self.len += 1;
                 return;
             }
