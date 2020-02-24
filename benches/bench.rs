@@ -338,8 +338,8 @@ criterion_group!(
 );
 criterion_main!(
     bench_push,
-    // bench_get,
-    // bench_iter,
-    // bench_iter_rev,
-    // bench_iter_mut,
+    bench_get,
+    bench_iter,
+    bench_iter_rev,
+    bench_iter_mut,
 );
