@@ -2,6 +2,10 @@
 
 Release history for `bucket_vec` crate.
 
+## 0.7.1 - 2020-02-24
+
+- Greatly improve performance of `BucketVec::push_get`
+
 ## 0.7 - 2020-02-23
 
 - Implement `IntoIterator` for `&BucketVec` and `&mut BucketVec`
