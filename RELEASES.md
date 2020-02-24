@@ -2,6 +2,12 @@
 
 Release history for `bucket_vec` crate.
 
+## 0.8.0 - 2020-02-24
+
+- Add new methods
+    - `BucketVec::first` and `BucketVec::first_mut`
+    - `BucketVec::last` and `BucketVec::last_mut`
+
 ## 0.7.1 - 2020-02-24
 
 - Greatly improve performance of `BucketVec::push_get`
