@@ -141,7 +141,7 @@ For other benchmarked operations the difference in performance has not been as s
 Also `BucketVec` is approximately 50% slower than the `Vec<_>` which is the
 theoretical optimum that unfortunately doesn't solve the underlying problem.
 
-## Alternative
+## Alternatives
 
 Before you use this data structure make sure that you are really in need of it.
 The only problem it solves is that `BucketVec::{push, push_get}` guarantee that
