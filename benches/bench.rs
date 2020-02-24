@@ -75,6 +75,21 @@ fn bench_vec_value_push(c: &mut Criterion) {
     );
 }
 
+fn bench_bucket_vec_push_get(c: &mut Criterion) {
+    c.bench_with_input(
+        BenchmarkId::new("bucket_vec::push_get", BIG_SAMPLE_SIZE),
+        &BIG_SAMPLE_SIZE,
+        |b, &size| {
+            let mut vec = BucketVec::<i32, QuadraticConfig>::new();
+            b.iter(|| {
+                for _ in 0..size {
+                    black_box(vec.push_get(0));
+                }
+            });
+        },
+    );
+}
+
 fn bench_bucket_vec_get(c: &mut Criterion) {
     let vec = (0..BIG_SAMPLE_SIZE)
         .into_iter()
@@ -293,8 +308,9 @@ fn bench_vec_value_iter_mut(c: &mut Criterion) {
 criterion_group!(
     bench_push,
     bench_bucket_vec_push,
-    bench_vec_box_push,
-    bench_vec_value_push
+    bench_bucket_vec_push_get,
+    // bench_vec_box_push,
+    // bench_vec_value_push
 );
 criterion_group!(
     bench_get,
@@ -322,8 +338,8 @@ criterion_group!(
 );
 criterion_main!(
     bench_push,
-    bench_get,
-    bench_iter,
-    bench_iter_rev,
-    bench_iter_mut,
+    // bench_get,
+    // bench_iter,
+    // bench_iter_rev,
+    // bench_iter_mut,
 );
