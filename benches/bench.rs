@@ -90,13 +90,49 @@ fn bench_bucket_vec_push_get(c: &mut Criterion) {
     );
 }
 
-fn bench_bucket_vec_get(c: &mut Criterion) {
+fn bench_bucket_vec_get_fast_config(c: &mut Criterion) {
     let vec = (0..BIG_SAMPLE_SIZE)
         .into_iter()
         .map(|value| value as i32)
         .collect::<BucketVec<i32, EqualSizeConfig>>();
     c.bench_with_input(
-        BenchmarkId::new("bucket_vec::get", BIG_SAMPLE_SIZE),
+        BenchmarkId::new("bucket_vec::get (fast config)", BIG_SAMPLE_SIZE),
+        &vec,
+        |b, vec| {
+            b.iter(|| {
+                for i in 0..vec.len() {
+                    black_box(vec.get(i).map(|val| *val));
+                }
+            });
+        },
+    );
+}
+
+fn bench_bucket_vec_get_medium_config(c: &mut Criterion) {
+    let vec = (0..BIG_SAMPLE_SIZE)
+        .into_iter()
+        .map(|value| value as i32)
+        .collect::<BucketVec<i32, QuadraticConfig>>();
+    c.bench_with_input(
+        BenchmarkId::new("bucket_vec::get (medium config)", BIG_SAMPLE_SIZE),
+        &vec,
+        |b, vec| {
+            b.iter(|| {
+                for i in 0..vec.len() {
+                    black_box(vec.get(i).map(|val| *val));
+                }
+            });
+        },
+    );
+}
+
+fn bench_bucket_vec_get_slow_config(c: &mut Criterion) {
+    let vec = (0..BIG_SAMPLE_SIZE)
+        .into_iter()
+        .map(|value| value as i32)
+        .collect::<BucketVec<i32, C5g1x5Config>>();
+    c.bench_with_input(
+        BenchmarkId::new("bucket_vec::get (slow config)", BIG_SAMPLE_SIZE),
         &vec,
         |b, vec| {
             b.iter(|| {
@@ -314,7 +350,9 @@ criterion_group!(
 );
 criterion_group!(
     bench_get,
-    bench_bucket_vec_get,
+    bench_bucket_vec_get_fast_config,
+    bench_bucket_vec_get_medium_config,
+    bench_bucket_vec_get_slow_config,
     bench_vec_box_get,
     bench_vec_value_get,
 );
