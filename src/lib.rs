@@ -329,6 +329,42 @@ impl<T, C> BucketVec<T, C> {
     pub fn iter_mut(&mut self) -> IterMut<T> {
         IterMut::new(self)
     }
+
+    /// Returns a shared reference to the first element of the bucket vector.
+    pub fn first(&self) -> Option<&T> {
+        if self.is_empty() {
+            return None
+        }
+        Some(&self.buckets[0][0])
+    }
+
+    /// Returns an exclusive reference to the first element of the bucket vector.
+    pub fn first_mut(&mut self) -> Option<&mut T> {
+        if self.is_empty() {
+            return None
+        }
+        Some(&mut self.buckets[0][0])
+    }
+
+    /// Returns a shared reference to the last element of the bucket vector.
+    pub fn last(&self) -> Option<&T> {
+        if self.is_empty() {
+            return None
+        }
+        let len_buckets = self.buckets.len();
+        let len_entries = self.buckets[len_buckets - 1].len();
+        Some(&self.buckets[len_buckets - 1][len_entries - 1])
+    }
+
+    /// Returns an exclusive reference to the last element of the bucket vector.
+    pub fn last_mut(&mut self) -> Option<&mut T> {
+        if self.is_empty() {
+            return None
+        }
+        let len_buckets = self.buckets.len();
+        let len_entries = self.buckets[len_buckets - 1].len();
+        Some(&mut self.buckets[len_buckets - 1][len_entries - 1])
+    }
 }
 
 impl<T, C> BucketVec<T, C>
