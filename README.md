@@ -141,6 +141,23 @@ For other benchmarked operations the difference in performance has not been as s
 Also `BucketVec` is approximately 50% slower than the `Vec<_>` which is the
 theoretical optimum that unfortunately doesn't solve the underlying problem.
 
+## Alternative
+
+Before you use this data structure make sure that you are really in need of it.
+The only problem it solves is that `BucketVec::{push, push_get}` guarantee that
+elements stored inside the `BucketVec` are never moved around.
+
+- This can also be achieved by `Vec<Box<T>>` although performance is generally
+  worse for the majority of operations.
+- Note that this is not a solution to store trait objects in a `Vec`!
+- Also note that under certain curcumstances it is possible to instead of a
+standard Rust `Vec<T>` and make sure that elements won't move upon a `push`
+operation by using `Vec::reserve` or `Vec::reserve_exact` with appropriate
+arguments for the use case.
+
+If none of the above alternative solutions is applicable you might consider
+using `BucketVec`.
+
 ## Authors & Credits
 
 Author: Robin Freyler (github.com/Robbepop)
