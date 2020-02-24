@@ -156,11 +156,17 @@ fn new_works_for<C>(_test_values: Vec<i32>)
 where
     C: BucketVecConfig,
 {
-    let vec = <BucketVec<i32, C>>::new();
+    let mut vec = <BucketVec<i32, C>>::new();
     assert_eq!(vec.len(), 0);
     assert!(vec.is_empty());
     assert!(vec.iter().next().is_none());
     assert!(vec.iter().next_back().is_none());
+    assert!(vec.iter_mut().next().is_none());
+    assert!(vec.iter_mut().next_back().is_none());
+    assert!(vec.first().is_none());
+    assert!(vec.first_mut().is_none());
+    assert!(vec.last().is_none());
+    assert!(vec.last_mut().is_none());
 }
 create_test_for_configs!(new_works_for);
 
@@ -309,3 +315,23 @@ where
     assert_eq!(vec.get_mut(vec.len()), None);
 }
 create_test_for_configs!(get_mut_works_for);
+
+fn last_works_for<C>(mut test_values: Vec<i32>)
+where
+    C: BucketVecConfig,
+{
+    let mut vec = test_values.iter().cloned().collect::<BucketVec<_>>();
+    assert_eq!(vec.last(), test_values.last());
+    assert_eq!(vec.last_mut(), test_values.last_mut());
+}
+create_test_for_configs!(last_works_for);
+
+fn first_works_for<C>(mut test_values: Vec<i32>)
+where
+    C: BucketVecConfig,
+{
+    let mut vec = test_values.iter().cloned().collect::<BucketVec<_>>();
+    assert_eq!(vec.first(), test_values.first());
+    assert_eq!(vec.first_mut(), test_values.first_mut());
+}
+create_test_for_configs!(first_works_for);
